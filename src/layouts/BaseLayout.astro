@@ -46,6 +46,7 @@ const dataTerstruktur = {
   name: situs.nama,
   alternateName: situs.merek,
   url: situs.url,
+  logo: new URL(situs.logo, basisUrl).href,
   description: situs.deskripsi,
   foundingDate: String(situs.berdiri),
   areaServed: 'ID',
@@ -88,6 +89,8 @@ const dataTerstruktur = {
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -19,6 +19,8 @@ function bersihkanKontak(kontak?: string): string {
 export const situs = {
   nama: 'Mutiara Software',
   merek: 'MutiaraSoft',
+  logo: '/logo.png',
+  favicon: '/favicon.png',
   induk: 'Mutiara Komputer (LPK Mutiara)',
   deskripsi:
     'Mutiara Software membangun aplikasi kasir, sistem informasi sekolah dan desa, serta website toko online untuk usaha di Indonesia — lengkap dengan integrasi akuntansi, payment gateway, dan cetak nota.',
