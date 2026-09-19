@@ -1,0 +1,20 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { situs, tautanWhatsApp } from '@/lib/site';
+---
+
+<BaseLayout judul="Permintaan terkirim" noindex={true}>
+  <section class="wadah py-28 max-w-xl text-center">
+    <h1 class="text-judul-besar font-display font-bold">Permintaan Anda sudah masuk</h1>
+    <p class="mt-5 text-ink/70">
+      Kami balas ke kontak yang Anda isi dalam 1×24 jam kerja. Kalau butuh lebih cepat,
+      hubungi saja langsung.
+    </p>
+    <div class="mt-9 flex flex-wrap justify-center gap-4">
+      <a href={tautanWhatsApp('Halo, saya baru mengirim permintaan lewat website.')} class="tombol-utama">
+        WhatsApp +{situs.whatsapp}
+      </a>
+      <a href="/" class="tombol-garis text-ink">Kembali ke beranda</a>
+    </div>
+  </section>
+</BaseLayout>

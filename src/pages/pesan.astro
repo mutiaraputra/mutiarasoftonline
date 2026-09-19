@@ -1,0 +1,39 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import OrderForm from '@/components/OrderForm.astro';
+---
+
+<BaseLayout
+  judul="Pesan aplikasi kustom"
+  deskripsi="Ceritakan kebutuhan usaha Anda — aplikasi kasir, toko online, sistem informasi, atau aplikasi kustom. Kami balas dengan perkiraan lingkup dan biaya dalam 1×24 jam kerja."
+>
+  <section class="wadah py-16 lg:py-24 grid lg:grid-cols-[1fr_1.2fr] gap-14">
+    <div>
+      <h1 class="text-judul-besar font-display font-bold">Ceritakan kebutuhan Anda</h1>
+      <p class="mt-5 text-ink/75">
+        Semakin jelas gambaran alur kerja yang Anda jalankan sekarang, semakin akurat
+        perkiraan yang bisa kami berikan. Tidak perlu istilah teknis — cukup ceritakan
+        apa yang setiap hari Anda kerjakan dan bagian mana yang paling melelahkan.
+      </p>
+
+      <ol class="mt-10 grid gap-5 border-l border-nacre pl-6">
+        <li>
+          <p class="font-semibold">1. Anda kirim formulir</p>
+          <p class="text-[0.95rem] text-ink/65">Masuk ke sistem kami dan langsung memicu notifikasi.</p>
+        </li>
+        <li>
+          <p class="font-semibold">2. Kami hubungi dalam 1×24 jam</p>
+          <p class="text-[0.95rem] text-ink/65">Lewat WhatsApp atau email, untuk menajamkan kebutuhan.</p>
+        </li>
+        <li>
+          <p class="font-semibold">3. Penawaran dan jadwal</p>
+          <p class="text-[0.95rem] text-ink/65">Lingkup kerja, biaya, dan tanggal serah terima yang mengikat.</p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-6 sm:p-9">
+      <OrderForm />
+    </div>
+  </section>
+</BaseLayout>

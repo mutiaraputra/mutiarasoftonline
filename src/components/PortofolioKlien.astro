@@ -1,0 +1,38 @@
+---
+import { industri, testimoni } from '@/lib/klien';
+const tampil = testimoni.filter((t) => t.izinTampil);
+---
+
+<section class="bg-ink text-pearl py-20" aria-labelledby="judul-portofolio">
+  <div class="wadah">
+    <h2 id="judul-portofolio" class="text-judul-besar font-display font-bold text-pearl">
+      Industri yang sudah kami layani
+    </h2>
+    <p class="mt-4 text-pearl/70 max-w-2xl">
+      Kebanyakan klien kami usaha dan lembaga di Ngawi dan sekitarnya — tempat di mana
+      sistem harus tetap berjalan meski listrik dan internet tidak selalu bersahabat.
+    </p>
+
+    <ul class="mt-10 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+      {industri.map((i) => (
+        <li class="flex items-baseline justify-between gap-4 border-b border-pearl/12 pb-3">
+          <span class="font-semibold">{i.nama}</span>
+          <span class="text-mikro text-pearl/50 text-right">{i.jumlah}</span>
+        </li>
+      ))}
+    </ul>
+
+    {tampil.length > 0 && (
+      <div class="mt-14 grid gap-6 md:grid-cols-2">
+        {tampil.map((t) => (
+          <blockquote class="bg-ink-2 rounded-[var(--radius-kartu)] p-7">
+            <p class="text-sedang text-pearl/90">{t.kutipan}</p>
+            <footer class="mt-5 text-mikro text-pearl/60">
+              {t.nama} — {t.peran}
+            </footer>
+          </blockquote>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

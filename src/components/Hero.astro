@@ -1,0 +1,154 @@
+---
+import { situs } from '@/lib/site';
+
+/* Isi nota dibuat di server supaya HTML pertama sudah lengkap (baik untuk SEO
+   dan untuk pengunjung yang mematikan JavaScript). Animasi hanya memunculkan
+   baris yang sudah ada. */
+const barisNota = [
+  { nama: 'Kopi susu gula aren', qty: 2, harga: 22000 },
+  { nama: 'Roti bakar cokelat', qty: 1, harga: 18000 },
+  { nama: 'Air mineral 600ml', qty: 2, harga: 6000 },
+];
+const subtotal = barisNota.reduce((t, b) => t + b.qty * b.harga, 0);
+const pajak = Math.round(subtotal * 0.11);
+const rupiah = (n: number) =>
+  new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
+---
+
+<section class="bg-ink text-pearl tepi-nacre overflow-hidden">
+  <div class="wadah grid lg:grid-cols-12 gap-14 lg:gap-8 items-center py-20 lg:py-28">
+    <div class="lg:col-span-7 hero-urut">
+      <p class="text-emas font-semibold text-[0.95rem]">Software &amp; website developer sejak {situs.berdiri}</p>
+
+      <h1 class="mt-4 text-display font-display font-bold text-pearl">
+        Software yang mengikuti cara kerja Anda, bukan sebaliknya.
+      </h1>
+
+      <p class="mt-6 text-sedang text-pearl/75">
+        Kami membangun aplikasi kasir, sistem informasi, dan website toko online untuk
+        usaha di Indonesia. Rapi di layar, benar di laporan, dan bisa dipakai kasir baru
+        tanpa pelatihan berhari-hari.
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center gap-4">
+        <a href="/pesan" class="tombol-utama">Ceritakan kebutuhan Anda</a>
+        <a href="/demo" class="tombol-garis text-pearl">Coba demo gratis</a>
+      </div>
+    </div>
+
+    <!-- Struk yang tercetak sendiri saat halaman dibuka: satu momen gerak, -->
+    <!-- dan kebetulan juga produk yang paling sering ditanyakan klien.     -->
+    <div class="lg:col-span-5 flex justify-center lg:justify-end">
+      <figure class="nota" aria-label="Contoh struk yang dicetak aplikasi kasir">
+        <div class="nota-kepala">
+          <p class="font-display font-semibold text-ink">Warung Kopi Sederhana</p>
+          <p class="text-mikro text-ink/55">Jl. Pahlawan 12, Madiun</p>
+        </div>
+
+        <table class="nota-tabel">
+          <tbody>
+            {barisNota.map((b) => (
+              <tr>
+                <td>{b.nama}<span class="text-ink/45"> ×{b.qty}</span></td>
+                <td class="text-right tabular-nums">{rupiah(b.qty * b.harga)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div class="nota-total">
+          <div><span>Subtotal</span><span class="tabular-nums">{rupiah(subtotal)}</span></div>
+          <div><span>PPN 11%</span><span class="tabular-nums">{rupiah(pajak)}</span></div>
+          <div class="nota-bayar"><span>Total</span><span class="tabular-nums">{rupiah(subtotal + pajak)}</span></div>
+        </div>
+
+        <figcaption class="nota-kaki">
+          Jurnal penjualan terkirim ke Accurate · 0,8 detik
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .nota {
+    width: min(340px, 100%);
+    background: var(--color-pearl-2);
+    color: var(--color-ink);
+    padding: 1.5rem 1.4rem 1.1rem;
+    border-radius: 6px;
+    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.7);
+    /* Tepi bergerigi khas kertas struk. */
+    --gerigi: radial-gradient(circle at 6px 100%, transparent 5px, black 5.5px);
+    -webkit-mask-image: var(--gerigi);
+    mask-image: var(--gerigi);
+    -webkit-mask-size: 12px 100%;
+    mask-size: 12px 100%;
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+    padding-bottom: 1.8rem;
+  }
+
+  .nota-kepala {
+    text-align: center;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px dashed var(--color-nacre);
+  }
+
+  .nota-tabel {
+    width: 100%;
+    font-size: 0.875rem;
+    margin: 0.9rem 0;
+    border-collapse: collapse;
+  }
+  .nota-tabel td { padding: 0.3rem 0; vertical-align: top; }
+
+  .nota-total {
+    border-top: 1px dashed var(--color-nacre);
+    padding-top: 0.8rem;
+    font-size: 0.875rem;
+    display: grid;
+    gap: 0.3rem;
+  }
+  .nota-total > div { display: flex; justify-content: space-between; }
+  .nota-bayar {
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding-top: 0.5rem;
+    margin-top: 0.3rem;
+    border-top: 1px solid var(--color-ink);
+  }
+
+  .nota-kaki {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    text-align: center;
+    color: var(--color-kilau);
+  }
+
+  /* Baris muncul berurutan, sekali saja, seperti kertas yang keluar printer. */
+  @media (prefers-reduced-motion: no-preference) {
+    .nota { animation: cetak 900ms cubic-bezier(0.22, 1, 0.36, 1) 300ms backwards; }
+    .nota-tabel tr,
+    .nota-total > div,
+    .nota-kaki {
+      animation: muncul 320ms ease-out backwards;
+    }
+    .nota-tabel tr:nth-child(1) { animation-delay: 900ms; }
+    .nota-tabel tr:nth-child(2) { animation-delay: 1020ms; }
+    .nota-tabel tr:nth-child(3) { animation-delay: 1140ms; }
+    .nota-total > div:nth-child(1) { animation-delay: 1300ms; }
+    .nota-total > div:nth-child(2) { animation-delay: 1380ms; }
+    .nota-total > div:nth-child(3) { animation-delay: 1480ms; }
+    .nota-kaki { animation-delay: 1750ms; }
+  }
+
+  @keyframes cetak {
+    from { opacity: 0; transform: translateY(-28px) scaleY(0.88); transform-origin: top; }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes muncul {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+</style>

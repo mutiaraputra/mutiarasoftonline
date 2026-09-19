@@ -1,0 +1,30 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import Profil from '@/components/Profil.astro';
+import KatalogProduk from '@/components/KatalogProduk.astro';
+import SorotanKasir from '@/components/SorotanKasir.astro';
+import KomparasiMarketplace from '@/components/KomparasiMarketplace.astro';
+import DemoInteraktif from '@/components/DemoInteraktif.astro';
+import PortofolioKlien from '@/components/PortofolioKlien.astro';
+import { situs } from '@/lib/site';
+---
+
+<BaseLayout judul={situs.nama} deskripsi={situs.deskripsi}>
+  <Hero />
+  <Profil />
+  <KatalogProduk batas={6} />
+  <SorotanKasir />
+  <KomparasiMarketplace />
+  <DemoInteraktif />
+  <PortofolioKlien />
+
+  <section class="wadah py-24 text-center">
+    <h2 class="text-judul-besar font-display font-bold">Punya alur kerja yang belum ada aplikasinya?</h2>
+    <p class="mt-5 text-ink/70 mx-auto">
+      Ceritakan cara Anda bekerja hari ini. Kami balas dengan perkiraan lingkup, biaya,
+      dan tanggal serah terima dalam 1×24 jam kerja.
+    </p>
+    <a href="/pesan" class="tombol-utama mt-9">Ceritakan kebutuhan Anda</a>
+  </section>
+</BaseLayout>

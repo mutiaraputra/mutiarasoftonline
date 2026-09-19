@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+
+const daftar = (await getCollection('demo')).sort((a, b) => a.data.urutan - b.data.urutan);
+const siap = daftar.filter((d) => d.data.siap).length;
+---
+
+<section class="wadah py-20" aria-labelledby="judul-demo">
+  <div class="max-w-2xl">
+    <h2 id="judul-demo" class="text-judul-besar font-display font-bold">
+      Coba dulu sebelum memesan
+    </h2>
+    <p class="mt-4 text-ink/70">
+      {siap === 1
+        ? 'Demo kasir di bawah berjalan penuh di peramban Anda — gratis, tanpa mendaftar, dan tidak ada data yang dikirim ke mana pun.'
+        : 'Demo di bawah bisa dibuka gratis tanpa mendaftar. Datanya direset berkala, jadi silakan diutak-atik sampai Anda yakin.'}
+    </p>
+  </div>
+
+  <ul class="mt-10 grid gap-5 md:grid-cols-3">
+    {daftar.map((d) => {
+      const internal = d.data.tautan.startsWith('/');
+      return (
+        <li
+          class:list={[
+            'flex flex-col rounded-[var(--radius-kartu)] p-6 border transition-colors',
+            d.data.siap ? 'bg-pearl-2 border-nacre hover:border-kilau/50' : 'bg-pearl-2/50 border-nacre/60',
+          ]}
+        >
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="font-display font-semibold text-sedang">{d.data.nama}</h3>
+            {!d.data.siap && (
+              <span class="shrink-0 text-mikro text-ink/55 border border-nacre rounded-full px-2.5 py-0.5">
+                Segera
+              </span>
+            )}
+          </div>
+
+          <p class="mt-3 text-[0.95rem] text-ink/70 flex-1">{d.data.ringkas}</p>
+
+          {d.data.akun && d.data.siap && (
+            <p class="mt-4 text-mikro text-ink/60">
+              Masuk dengan <code class="bg-nacre/60 px-1.5 py-0.5 rounded">{d.data.akun}</code>
+            </p>
+          )}
+
+          {d.data.siap ? (
+            <a
+              href={d.data.tautan}
+              class="tombol-garis text-ink mt-5 justify-center"
+              rel={internal ? undefined : 'noopener'}
+              target={internal ? undefined : '_blank'}
+            >
+              Buka demo
+            </a>
+          ) : (
+            <a href="/pesan" class="mt-5 text-center text-[0.95rem] text-kilau underline">
+              Minta dijadwalkan peragaan
+            </a>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+</section>

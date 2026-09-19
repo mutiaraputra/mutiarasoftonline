@@ -1,0 +1,40 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import KomparasiMarketplace from '@/components/KomparasiMarketplace.astro';
+import { situs } from '@/lib/site';
+
+const artikel = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Website toko online sendiri atau marketplace? Panduan untuk pemilik usaha',
+  description:
+    'Perbandingan margin, kendali data pelanggan, dan jangkauan antara berjualan lewat marketplace dan lewat website toko sendiri.',
+  inLanguage: 'id-ID',
+  publisher: { '@type': 'Organization', name: situs.nama, url: situs.url },
+};
+---
+
+<BaseLayout
+  judul="Website toko sendiri atau marketplace?"
+  deskripsi="Perbandingan margin, cerita merek, kendali data pelanggan, dan jangkauan — plus kalkulator untuk menghitung selisihnya dengan angka usaha Anda sendiri."
+  tipe="article"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(artikel)} is:inline slot="head" />
+
+  <KomparasiMarketplace />
+
+  <section class="wadah pb-24 max-w-3xl">
+    <h2 class="text-judul font-display font-semibold">Kapan sebaiknya mulai punya toko sendiri?</h2>
+    <p class="mt-5 text-ink/75">
+      Patokan sederhana: begitu ada pembeli yang kembali membeli untuk kedua kalinya.
+      Pembeli berulang adalah aset yang paling mahal Anda dapatkan, dan justru itulah
+      yang paling sulit Anda hubungi lewat marketplace.
+    </p>
+    <p class="mt-4 text-ink/75">
+      Toko online buatan kami datang dengan pembayaran otomatis, hitung ongkir sesuai
+      kurir dan alamat, serta cetak nota dan label kirim dari panel admin — supaya
+      pindah dari marketplace tidak berarti pindah ke pekerjaan manual.
+    </p>
+    <a href="/pesan" class="tombol-utama mt-9">Minta perkiraan biaya toko online</a>
+  </section>
+</BaseLayout>

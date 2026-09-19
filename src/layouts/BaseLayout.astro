@@ -1,0 +1,104 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { situs } from '@/lib/site';
+
+interface Props {
+  judul: string;
+  deskripsi?: string;
+  gambar?: string;
+  tipe?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const {
+  judul,
+  deskripsi = situs.deskripsi,
+  gambar = '/og/default.jpg',
+  tipe = 'website',
+  noindex = false,
+} = Astro.props;
+
+const kanonik = new URL(Astro.url.pathname, situs.url).href;
+const gambarPenuh = new URL(gambar, situs.url).href;
+const judulPenuh = judul === situs.nama ? judul : `${judul} — ${situs.nama}`;
+
+const dataTerstruktur = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: situs.nama,
+  alternateName: situs.merek,
+  url: situs.url,
+  description: situs.deskripsi,
+  foundingDate: String(situs.berdiri),
+  areaServed: 'ID',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: situs.alamat.jalan,
+    addressLocality: situs.alamat.desa,
+    addressRegion: situs.alamat.provinsi,
+    postalCode: situs.alamat.kodePos,
+    addressCountry: 'ID',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: `+${situs.whatsapp}`,
+    contactType: 'sales',
+    availableLanguage: ['id', 'en'],
+  },
+  sameAs: [situs.facebook, situs.youtube, situs.github, situs.linkedin, situs.indukUrl],
+};
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={kanonik} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <title>{judulPenuh}</title>
+    <meta name="description" content={deskripsi} />
+
+    <meta property="og:type" content={tipe} />
+    <meta property="og:site_name" content={situs.nama} />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:title" content={judulPenuh} />
+    <meta property="og:description" content={deskripsi} />
+    <meta property="og:url" content={kanonik} />
+    <meta property="og:image" content={gambarPenuh} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(dataTerstruktur)} is:inline />
+
+    <!-- Data terstruktur tambahan per halaman (mis. Article, Product). -->
+    <slot name="head" />
+  </head>
+
+  <body class="min-h-dvh flex flex-col">
+    <a
+      href="#konten"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-emas focus:text-ink focus:px-4 focus:py-2 focus:rounded-full"
+    >
+      Lompat ke konten
+    </a>
+
+    <Header />
+    <main id="konten" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import KartuProduk from './KartuProduk.astro';
+
+interface Props { batas?: number }
+const { batas } = Astro.props;
+
+const semua = (await getCollection('produk')).sort(
+  (a, b) => a.data.urutan - b.data.urutan,
+);
+const daftar = batas ? semua.slice(0, batas) : semua;
+---
+
+<section class="wadah py-20" aria-labelledby="judul-katalog">
+  <div class="flex flex-wrap items-end justify-between gap-6">
+    <div>
+      <h2 id="judul-katalog" class="text-judul-besar font-display font-bold">
+        Yang sudah kami bangun
+      </h2>
+      <p class="mt-4 text-ink/70">
+        Setiap produk lahir dari satu pekerjaan klien yang nyata, lalu dirapikan agar
+        bisa dipasang di tempat lain.
+      </p>
+    </div>
+    {batas && (
+      <a href="/produk" class="tombol-garis text-ink">Lihat seluruh katalog</a>
+    )}
+  </div>
+
+  <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {daftar.map((p) => (
+      <KartuProduk
+        slug={p.id}
+        nama={p.data.nama}
+        ringkas={p.data.ringkas}
+        platform={p.data.platform}
+        fitur={p.data.fitur}
+        unggulan={p.data.unggulan}
+      />
+    ))}
+  </div>
+</section>

@@ -1,0 +1,68 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { tautanWhatsApp } from '@/lib/site';
+
+export async function getStaticPaths() {
+  const daftar = await getCollection('produk');
+  return daftar.map((produk) => ({ params: { slug: produk.id }, props: { produk } }));
+}
+
+const { produk } = Astro.props;
+const { Content } = await render(produk);
+const d = produk.data;
+
+const namaPlatform: Record<string, string> = { desktop: 'Desktop', web: 'Web', mobile: 'Android' };
+---
+
+<BaseLayout judul={d.nama} deskripsi={d.ringkas}>
+  <article>
+    <header class="bg-ink text-pearl tepi-nacre py-16">
+      <div class="wadah max-w-3xl">
+        <p class="text-emas font-semibold text-[0.95rem]">
+          {d.platform.map((p) => namaPlatform[p] ?? p).join(' · ')}
+        </p>
+        <h1 class="mt-3 text-judul-besar lg:text-display font-display font-bold text-pearl">{d.nama}</h1>
+        <p class="mt-5 text-sedang text-pearl/75">{d.ringkas}</p>
+      </div>
+    </header>
+
+    <div class="wadah py-16 grid lg:grid-cols-[1.3fr_1fr] gap-14">
+      <div class="prose-sederhana">
+        <Content />
+
+        <h2 class="text-judul font-display font-semibold mt-10">Fitur</h2>
+        <ul class="mt-5 grid gap-2.5">
+          {d.fitur.map((f) => (
+            <li class="flex gap-3">
+              <span class="mt-2.5 size-1.5 rounded-full bg-kilau shrink-0" aria-hidden="true"></span>
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <aside class="bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-7 h-fit lg:sticky lg:top-24">
+        <p class="font-display font-semibold text-sedang">Tertarik dengan {d.nama}?</p>
+        <p class="mt-3 text-[0.95rem] text-ink/70">
+          Setiap pemasangan disesuaikan dengan alur usaha Anda, jadi biayanya bergantung
+          pada lingkup. Kirim gambaran kebutuhan, kami balas dengan perkiraan.
+        </p>
+        <a href="/pesan" class="tombol-utama mt-6 w-full justify-center">Minta perkiraan</a>
+        {d.demo && (
+          <a href={d.demo} class="tombol-garis text-ink mt-3 w-full justify-center">Coba demonya</a>
+        )}
+        <a
+          href={tautanWhatsApp(`Halo, saya ingin bertanya tentang ${d.nama}.`)}
+          class="block mt-5 text-center text-[0.95rem] text-kilau underline"
+        >
+          Tanya cepat lewat WhatsApp
+        </a>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>
+
+<style is:global>
+  .prose-sederhana p { margin-bottom: 1rem; color: color-mix(in oklab, var(--color-ink) 78%, transparent); }
+</style>

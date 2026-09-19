@@ -1,0 +1,32 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const daftar = (await getCollection('layanan')).sort((a, b) => a.data.urutan - b.data.urutan);
+---
+
+<BaseLayout
+  judul="Layanan"
+  deskripsi="Pembuatan aplikasi kasir, website toko online, sistem informasi sekolah dan desa, serta aplikasi kustom untuk usaha dan lembaga."
+>
+  <section class="wadah py-20">
+    <h1 class="text-judul-besar font-display font-bold">Layanan</h1>
+    <p class="mt-5 text-ink/70">
+      Empat jalur pekerjaan yang paling sering diminta. Bila kebutuhan Anda tidak masuk
+      salah satunya, jalur keempat memang untuk itu.
+    </p>
+
+    <div class="mt-10 grid gap-5 sm:grid-cols-2">
+      {daftar.map((l) => (
+        <article class="relative bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-7 hover:border-kilau/50 transition-colors">
+          <h2 class="font-display font-semibold text-sedang">
+            <a href={`/layanan/${l.id}`} class="after:absolute after:inset-0">{l.data.nama}</a>
+          </h2>
+          <p class="mt-3 text-[0.95rem] text-ink/70">{l.data.ringkas}</p>
+        </article>
+      ))}
+    </div>
+
+    <a href="/pesan" class="tombol-utama mt-10">Ceritakan kebutuhan Anda</a>
+  </section>
+</BaseLayout>

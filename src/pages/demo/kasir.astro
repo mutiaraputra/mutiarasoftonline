@@ -1,0 +1,291 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { rupiah } from '@/lib/site';
+
+/**
+ * Demo kasir yang berjalan penuh di peramban pengunjung — tanpa server, tanpa
+ * pendaftaran. Tujuannya satu: memperlihatkan bahwa setiap transaksi kasir
+ * langsung menghasilkan jurnal akuntansi, bukan sekadar struk.
+ */
+const katalog = [
+  { kode: 'BRG-001', nama: 'Semen 40 kg', harga: 62000, hpp: 54000 },
+  { kode: 'BRG-002', nama: 'Cat tembok 5 kg', harga: 98000, hpp: 81000 },
+  { kode: 'BRG-003', nama: 'Paku 1 kg', harga: 21000, hpp: 16500 },
+  { kode: 'BRG-004', nama: 'Pipa PVC 4"', harga: 87000, hpp: 72000 },
+  { kode: 'BRG-005', nama: 'Kuas 3"', harga: 24000, hpp: 17000 },
+  { kode: 'BRG-006', nama: 'Kunci pas set', harga: 145000, hpp: 118000 },
+  { kode: 'BRG-007', nama: 'Lampu LED 12W', harga: 32000, hpp: 23500 },
+  { kode: 'BRG-008', nama: 'Engsel pintu', harga: 18500, hpp: 13000 },
+];
+---
+
+<BaseLayout
+  judul="Demo Aplikasi Kasir"
+  deskripsi="Coba sendiri alur kasir Mutiara Software: pilih barang, beri diskon, bayar, cetak struk — dan lihat jurnal akuntansi yang terbentuk otomatis di sebelahnya."
+>
+  <section class="wadah py-12 lg:py-16" x-data={`kasir(${JSON.stringify(katalog)})`}>
+    <header class="max-w-2xl">
+      <p class="text-kilau font-semibold text-[0.95rem]">Demo langsung · gratis · tanpa daftar</p>
+      <h1 class="mt-3 text-judul-besar font-display font-bold">Aplikasi Kasir Plus Akuntansi</h1>
+      <p class="mt-4 text-ink/70">
+        Toko contoh: bahan bangunan. Pilih barang, ubah jumlah, beri diskon, lalu bayar.
+        Perhatikan panel jurnal di kanan — itu yang biasanya harus Anda ketik ulang ke
+        software akuntansi tiap akhir bulan.
+      </p>
+    </header>
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-[1.15fr_0.95fr_0.9fr] items-start">
+      <!-- 1. Katalog -->
+      <div class="bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-5">
+        <h2 class="font-display font-semibold">Pilih barang</h2>
+        <div class="mt-4 grid grid-cols-2 gap-2.5">
+          <template x-for="b in katalog" :key="b.kode">
+            <button
+              type="button"
+              class="text-left border border-nacre rounded-[10px] p-3 hover:border-kilau hover:bg-kilau/5 transition-colors"
+              @click="tambah(b)"
+            >
+              <span class="block text-[0.9rem] font-semibold leading-snug" x-text="b.nama"></span>
+              <span class="block mt-1 text-mikro text-ink/55 tabular-nums" x-text="$rupiah(b.harga)"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- 2. Keranjang & pembayaran -->
+      <div class="bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-5">
+        <div class="flex items-center justify-between">
+          <h2 class="font-display font-semibold">Transaksi</h2>
+          <button type="button" class="text-mikro text-bara underline" @click="kosongkan" x-show="keranjang.length">
+            Kosongkan
+          </button>
+        </div>
+
+        <p class="mt-6 text-[0.95rem] text-ink/50" x-show="!keranjang.length">
+          Belum ada barang. Klik salah satu di sebelah kiri.
+        </p>
+
+        <ul class="mt-4 divide-y divide-nacre" x-show="keranjang.length" x-cloak>
+          <template x-for="item in keranjang" :key="item.kode">
+            <li class="py-3 flex items-center gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="text-[0.9rem] font-semibold truncate" x-text="item.nama"></p>
+                <p class="text-mikro text-ink/55 tabular-nums" x-text="$rupiah(item.harga) + ' × ' + item.qty"></p>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button type="button" class="tombol-qty" @click="ubah(item, -1)" aria-label="Kurangi">−</button>
+                <span class="w-6 text-center tabular-nums text-[0.9rem]" x-text="item.qty"></span>
+                <button type="button" class="tombol-qty" @click="ubah(item, 1)" aria-label="Tambah">+</button>
+              </div>
+              <span class="w-24 text-right tabular-nums text-[0.9rem]" x-text="$rupiah(item.harga * item.qty)"></span>
+            </li>
+          </template>
+        </ul>
+
+        <div class="mt-5 pt-5 border-t border-nacre grid gap-2.5 text-[0.9rem]" x-show="keranjang.length" x-cloak>
+          <label class="flex items-center justify-between gap-3">
+            <span>Diskon (<span x-text="diskon"></span>%)</span>
+            <input type="range" min="0" max="20" step="1" x-model.number="diskon" class="w-32 accent-[var(--color-emas)]" />
+          </label>
+          <div class="flex justify-between"><span>Subtotal</span><span class="tabular-nums" x-text="$rupiah(subtotal)"></span></div>
+          <div class="flex justify-between text-ink/60"><span>Potongan</span><span class="tabular-nums" x-text="'− ' + $rupiah(potongan)"></span></div>
+          <div class="flex justify-between text-ink/60"><span>PPN 11%</span><span class="tabular-nums" x-text="$rupiah(ppn)"></span></div>
+          <div class="flex justify-between font-bold text-sedang pt-2 border-t border-ink">
+            <span>Total</span><span class="tabular-nums" x-text="$rupiah(total)"></span>
+          </div>
+
+          <label class="grid gap-1.5 mt-3">
+            <span class="font-semibold">Uang diterima</span>
+            <input type="number" min="0" step="1000" x-model.number="dibayar" class="isian-demo" />
+          </label>
+          <p class="flex justify-between" x-show="dibayar >= total && total > 0">
+            <span>Kembalian</span>
+            <span class="tabular-nums font-semibold text-kilau" x-text="$rupiah(dibayar - total)"></span>
+          </p>
+
+          <button
+            type="button"
+            class="tombol-utama justify-center mt-3 disabled:opacity-40"
+            :disabled="!keranjang.length || dibayar < total"
+            @click="bayar"
+          >
+            Bayar &amp; cetak struk
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Jurnal otomatis -->
+      <div class="bg-ink text-pearl rounded-[var(--radius-kartu)] p-5 lg:sticky lg:top-24">
+        <h2 class="font-display font-semibold text-pearl">Jurnal yang terbentuk</h2>
+        <p class="mt-2 text-mikro text-pearl/60">
+          Dibuat otomatis mengikuti isi keranjang. Inilah yang dikirim ke Accurate.
+        </p>
+
+        <table class="mt-5 w-full text-[0.82rem]">
+          <thead class="text-pearl/50">
+            <tr><th class="text-left font-normal pb-2">Akun</th><th class="text-right font-normal pb-2">Debit</th><th class="text-right font-normal pb-2">Kredit</th></tr>
+          </thead>
+          <tbody class="tabular-nums">
+            <template x-for="j in jurnal" :key="j.akun">
+              <tr class="border-t border-pearl/10">
+                <td class="py-2 pr-2" x-text="j.akun"></td>
+                <td class="py-2 text-right text-emas" x-text="j.debit ? $rupiah(j.debit) : '—'"></td>
+                <td class="py-2 text-right text-kilau" x-text="j.kredit ? $rupiah(j.kredit) : '—'"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+
+        <p class="mt-5 pt-4 border-t border-pearl/15 text-mikro text-pearl/60">
+          Laba kotor transaksi ini:
+          <span class="text-pearl font-semibold tabular-nums" x-text="$rupiah(labaKotor)"></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Struk hasil pembayaran -->
+    <div
+      class="fixed inset-0 z-50 grid place-items-center bg-ink/70 p-4"
+      x-show="strukTampil"
+      x-cloak
+      @click.self="strukTampil = false"
+      @keydown.escape.window="strukTampil = false"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Struk pembayaran"
+    >
+      <div class="bg-pearl-2 rounded-lg p-7 w-full max-w-xs" id="struk-cetak">
+        <div class="text-center border-b border-dashed border-nacre pb-3">
+          <p class="font-display font-semibold">Toko Bangunan Contoh</p>
+          <p class="text-mikro text-ink/55">Demo Mutiara Software</p>
+        </div>
+        <table class="w-full text-[0.82rem] my-3">
+          <tbody>
+            <template x-for="i in struk.item" :key="i.kode">
+              <tr>
+                <td class="py-1" x-text="i.nama + ' ×' + i.qty"></td>
+                <td class="py-1 text-right tabular-nums" x-text="$rupiah(i.harga * i.qty)"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+        <div class="border-t border-dashed border-nacre pt-2 text-[0.82rem] grid gap-1">
+          <div class="flex justify-between"><span>Total</span><span class="tabular-nums font-bold" x-text="$rupiah(struk.total)"></span></div>
+          <div class="flex justify-between"><span>Tunai</span><span class="tabular-nums" x-text="$rupiah(struk.dibayar)"></span></div>
+          <div class="flex justify-between"><span>Kembali</span><span class="tabular-nums" x-text="$rupiah(struk.dibayar - struk.total)"></span></div>
+        </div>
+        <p class="mt-4 text-center text-mikro text-kilau">Jurnal terkirim ke Accurate ✓</p>
+
+        <div class="mt-6 flex gap-2 cetak-sembunyi">
+          <button type="button" class="tombol-garis text-ink flex-1 justify-center" @click="window.print()">Cetak</button>
+          <button type="button" class="tombol-utama flex-1 justify-center" @click="strukTampil = false">Tutup</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-14 text-center text-ink/70">
+      Ini versi demo yang disederhanakan. Versi sebenarnya menangani multi-kasir,
+      barcode, stok per gudang, dan piutang.
+    </p>
+    <div class="mt-6 flex flex-wrap justify-center gap-4">
+      <a href="/pesan" class="tombol-utama">Minta perkiraan biaya</a>
+      <a href="/produk/aplikasi-kasir-plus-akuntansi" class="tombol-garis text-ink">Lihat daftar fiturnya</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  function kasir(katalog) {
+    return {
+      katalog,
+      keranjang: [],
+      diskon: 0,
+      dibayar: 0,
+      strukTampil: false,
+      struk: { item: [], total: 0, dibayar: 0 },
+
+      tambah(b) {
+        const ada = this.keranjang.find((i) => i.kode === b.kode);
+        if (ada) ada.qty += 1;
+        else this.keranjang.push({ ...b, qty: 1 });
+      },
+      ubah(item, delta) {
+        item.qty += delta;
+        if (item.qty < 1) this.keranjang = this.keranjang.filter((i) => i.kode !== item.kode);
+      },
+      kosongkan() {
+        this.keranjang = [];
+        this.diskon = 0;
+        this.dibayar = 0;
+      },
+
+      get subtotal() {
+        return this.keranjang.reduce((t, i) => t + i.harga * i.qty, 0);
+      },
+      get potongan() {
+        return Math.round(this.subtotal * (this.diskon / 100));
+      },
+      get dasarPajak() {
+        return this.subtotal - this.potongan;
+      },
+      get ppn() {
+        return Math.round(this.dasarPajak * 0.11);
+      },
+      get total() {
+        return this.dasarPajak + this.ppn;
+      },
+      get hpp() {
+        return this.keranjang.reduce((t, i) => t + i.hpp * i.qty, 0);
+      },
+      get labaKotor() {
+        return this.dasarPajak - this.hpp;
+      },
+      get jurnal() {
+        return [
+          { akun: 'Kas', debit: this.total, kredit: 0 },
+          { akun: 'Potongan penjualan', debit: this.potongan, kredit: 0 },
+          { akun: 'Pendapatan penjualan', debit: 0, kredit: this.subtotal },
+          { akun: 'PPN keluaran', debit: 0, kredit: this.ppn },
+          { akun: 'Harga pokok penjualan', debit: this.hpp, kredit: 0 },
+          { akun: 'Persediaan barang', debit: 0, kredit: this.hpp },
+        ];
+      },
+
+      bayar() {
+        this.struk = {
+          item: JSON.parse(JSON.stringify(this.keranjang)),
+          total: this.total,
+          dibayar: this.dibayar,
+        };
+        this.strukTampil = true;
+        this.kosongkan();
+      },
+    };
+  }
+</script>
+
+<style>
+  .tombol-qty {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid var(--color-nacre);
+    border-radius: 6px;
+    line-height: 1;
+    font-size: 1rem;
+  }
+  .tombol-qty:hover { border-color: var(--color-kilau); }
+
+  .isian-demo {
+    border: 1px solid var(--color-nacre);
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    width: 100%;
+  }
+
+  @media print {
+    body > *:not(:has(#struk-cetak)) { display: none !important; }
+    .cetak-sembunyi { display: none !important; }
+  }
+</style>

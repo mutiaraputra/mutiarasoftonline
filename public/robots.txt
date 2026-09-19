@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /terima-kasih
+Disallow: /api/
+
+Sitemap: https://mutiarasoft.online/sitemap-index.xml

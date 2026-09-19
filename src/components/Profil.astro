@@ -1,0 +1,35 @@
+---
+import { nilai, situs } from '@/lib/site';
+---
+
+<section class="wadah py-20 lg:py-24" aria-labelledby="judul-profil">
+  <div class="grid lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-16 items-start">
+    <div>
+      <h2 id="judul-profil" class="text-judul-besar font-display font-bold">
+        Tiga puluh tahun memperbaiki, delapan belas tahun membangun
+      </h2>
+      <p class="mt-6 text-ink/75">
+        Mutiara Software adalah lini pengembangan perangkat lunak dari
+        {situs.induk}, Jogorogo, Ngawi. Usaha ini dibuka tahun {situs.berdiri}
+        sebagai lembaga kursus dan jasa servis, dan sampai hari ini teknisinya
+        masih membuka casing komputer setiap minggu.
+      </p>
+      <p class="mt-4 text-ink/75">
+        Kombinasi itu yang membedakan kami dari rumah software biasa: kami tahu
+        bagaimana aplikasi berperilaku di komputer toko yang sudah berumur tujuh
+        tahun, di printer thermal murah, dan di koneksi internet desa yang putus
+        tiap sore. Aplikasi yang kami buat dirancang untuk tempat-tempat itu.
+      </p>
+      <a href="/tentang" class="tombol-garis mt-8 text-ink">Selengkapnya tentang kami</a>
+    </div>
+
+    <dl class="grid sm:grid-cols-3 lg:grid-cols-1 gap-px bg-nacre border border-nacre rounded-[var(--radius-kartu)] overflow-hidden">
+      {nilai.map((n) => (
+        <div class="bg-pearl-2 p-6">
+          <dt class="font-display font-semibold text-sedang">{n.judul}</dt>
+          <dd class="mt-2 text-[0.95rem] text-ink/70">{n.isi}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

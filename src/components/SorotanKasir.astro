@@ -1,0 +1,55 @@
+---
+import { tautanWhatsApp } from '@/lib/site';
+
+const langkah = [
+  { judul: 'Kasir menutup transaksi', isi: 'Struk tercetak, stok berkurang, piutang tercatat bila pembayaran mundur.' },
+  { judul: 'Jurnal terbentuk otomatis', isi: 'Penjualan, HPP, kas, dan pajak masuk ke akun yang benar tanpa diketik ulang.' },
+  { judul: 'Data masuk ke Accurate', isi: 'Lewat jembatan data terjadwal, atau langsung saat transaksi bila diminta.' },
+];
+---
+
+<section class="wadah py-20" aria-labelledby="judul-kasir">
+  <div class="bg-pearl-2 border border-emas/50 rounded-[var(--radius-kartu)] p-7 sm:p-12">
+    <div class="grid lg:grid-cols-[1.15fr_1fr] gap-12 items-center">
+      <div>
+        <p class="text-kilau font-semibold text-[0.95rem]">Produk andalan</p>
+        <h2 id="judul-kasir" class="mt-3 text-judul-besar font-display font-bold">
+          Aplikasi Kasir Plus Akuntansi Lengkap
+        </h2>
+        <p class="mt-5 text-ink/75">
+          Kebanyakan toko memakai aplikasi kasir untuk mencatat penjualan, lalu
+          mengetik ulang angkanya ke software akuntansi setiap akhir bulan. Pekerjaan
+          ganda itu yang kami hapus. Aplikasi ini terhubung langsung ke
+          <strong>Accurate</strong>, software akuntansi yang sudah dipakai akuntan dan
+          konsultan pajak di Indonesia — jadi Anda tidak perlu memaksa mereka pindah
+          ke sistem baru.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href="/produk/aplikasi-kasir-plus-akuntansi" class="tombol-utama">Lihat fiturnya</a>
+          <a
+            href={tautanWhatsApp('Halo, saya ingin tanya soal Aplikasi Kasir Plus Akuntansi dan integrasi Accurate.')}
+            class="tombol-garis text-ink"
+          >
+            Tanya soal integrasi Accurate
+          </a>
+        </div>
+      </div>
+
+      <!-- Tiga langkah ini memang berurutan, jadi penomorannya bermakna. -->
+      <ol class="grid gap-5">
+        {langkah.map((l, i) => (
+          <li class="flex gap-4">
+            <span class="shrink-0 size-8 rounded-full bg-ink text-pearl grid place-items-center text-[0.9rem] font-semibold tabular-nums">
+              {i + 1}
+            </span>
+            <div>
+              <p class="font-semibold">{l.judul}</p>
+              <p class="text-[0.95rem] text-ink/65">{l.isi}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>

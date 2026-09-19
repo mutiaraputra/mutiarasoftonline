@@ -1,0 +1,152 @@
+---
+/**
+ * Bagian edukasi: toko sendiri vs marketplace.
+ * Angka komisi dan iklan sengaja TIDAK dipatok di dalam kode — setiap kategori
+ * dan setiap program marketplace berbeda, dan angkanya berubah tiap tahun.
+ * Pengunjung memasukkan angka yang dia alami sendiri, jadi hasilnya jujur.
+ */
+const perbandingan = [
+  {
+    aspek: 'Potongan tiap transaksi',
+    marketplace: 'Komisi per penjualan, plus biaya layanan dan program gratis ongkir.',
+    sendiri: 'Hanya biaya payment gateway. Sisa marginnya tetap di kas Anda.',
+  },
+  {
+    aspek: 'Cerita merek',
+    marketplace: 'Tampilan toko dibatasi template; pembeli membandingkan Anda dengan penjual sebelah di halaman yang sama.',
+    sendiri: 'Seluruh halaman milik Anda — foto, cerita, cara menjelaskan produk, tanpa penjual pesaing di sebelahnya.',
+  },
+  {
+    aspek: 'Data pelanggan',
+    marketplace: 'Nomor dan alamat pembeli disamarkan; Anda sulit menghubungi ulang pembeli lama.',
+    sendiri: 'Basis data pembeli milik Anda, bisa diekspor dan dipakai untuk promosi ulang.',
+  },
+  {
+    aspek: 'Kendali operasional',
+    marketplace: 'Aturan, biaya, dan algoritma pencarian bisa berubah sewaktu-waktu tanpa Anda diajak bicara.',
+    sendiri: 'Harga, promo, dan alur pesanan Anda tentukan sendiri.',
+  },
+  {
+    aspek: 'Jangkauan',
+    marketplace: 'Trafik sudah tersedia sejak hari pertama — ini keunggulan nyata marketplace.',
+    sendiri: 'Dibangun lewat Google, media sosial, dan pelanggan lama; lebih lambat, tapi tidak bisa dicabut.',
+  },
+] as const;
+---
+
+<section class="wadah py-20" aria-labelledby="judul-komparasi">
+  <div class="max-w-3xl">
+    <h2 id="judul-komparasi" class="text-judul-besar font-display font-bold">
+      Punya toko sendiri, atau cukup berjualan di marketplace?
+    </h2>
+    <p class="mt-5 text-ink/75">
+      Jawaban jujurnya: keduanya. Marketplace bagus untuk menemukan pembeli baru,
+      website sendiri bagus untuk menyimpan pembeli yang sudah Anda dapat. Yang
+      merugikan adalah bertumpu pada satu saja — terutama bila itu yang memungut
+      komisi dari setiap penjualan Anda.
+    </p>
+  </div>
+
+  <!-- Tabel: di layar kecil berubah jadi tumpukan kartu, bukan tabel yang digeser. -->
+  <div class="mt-12 overflow-x-auto">
+    <table class="w-full border-collapse min-w-[640px] text-[0.95rem]">
+      <caption class="sr-only">
+        Perbandingan berjualan lewat marketplace dan lewat website toko sendiri
+      </caption>
+      <thead>
+        <tr class="text-left">
+          <th scope="col" class="w-[18%] pb-4 pr-4 font-semibold">Aspek</th>
+          <th scope="col" class="w-[41%] pb-4 pr-4 font-semibold text-ink/70">Lewat marketplace</th>
+          <th scope="col" class="w-[41%] pb-4 font-semibold text-kilau">Website toko sendiri</th>
+        </tr>
+      </thead>
+      <tbody>
+        {perbandingan.map((b) => (
+          <tr class="border-t border-nacre align-top">
+            <th scope="row" class="py-5 pr-4 font-semibold text-left">{b.aspek}</th>
+            <td class="py-5 pr-4 text-ink/65">{b.marketplace}</td>
+            <td class="py-5 text-ink/85">{b.sendiri}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Kalkulator: angka diisi pengunjung, bukan klaim kami. -->
+  <div
+    class="mt-14 bg-ink text-pearl rounded-[var(--radius-kartu)] p-7 sm:p-10 grid lg:grid-cols-[1fr_1fr] gap-10"
+    x-data="hitungMargin()"
+  >
+    <div>
+      <h3 class="text-judul font-display font-semibold text-pearl">
+        Hitung dengan angka Anda sendiri
+      </h3>
+      <p class="mt-3 text-pearl/70 text-[0.95rem]">
+        Masukkan omzet dan potongan yang benar-benar Anda alami. Kami tidak menebak
+        tarif siapa pun.
+      </p>
+
+      <div class="mt-7 grid gap-5">
+        <label class="grid gap-1.5">
+          <span class="text-[0.95rem] font-semibold">Omzet marketplace per bulan (Rp)</span>
+          <input type="number" min="0" step="100000" x-model.number="omzet" class="isian-gelap" />
+        </label>
+
+        <label class="grid gap-1.5">
+          <span class="text-[0.95rem] font-semibold">
+            Total potongan marketplace — komisi + layanan + iklan
+            (<span x-text="potongan"></span>%)
+          </span>
+          <input type="range" min="0" max="25" step="0.5" x-model.number="potongan" class="w-full accent-[var(--color-emas)]" />
+        </label>
+
+        <label class="grid gap-1.5">
+          <span class="text-[0.95rem] font-semibold">
+            Biaya payment gateway toko sendiri (<span x-text="gateway"></span>%)
+          </span>
+          <input type="range" min="0" max="5" step="0.1" x-model.number="gateway" class="w-full accent-[var(--color-emas)]" />
+        </label>
+      </div>
+    </div>
+
+    <div class="flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-pearl/15 lg:pl-10 pt-8 lg:pt-0">
+      <p class="text-pearl/60 text-[0.95rem]">Selisih yang tinggal di kas Anda per tahun</p>
+      <p class="mt-2 font-display font-bold text-emas tabular-nums" style="font-size: clamp(2rem, 1rem + 3.5vw, 3rem)">
+        <span x-text="$rupiah(selisihTahunan)"></span>
+      </p>
+      <p class="mt-4 text-[0.95rem] text-pearl/70">
+        Bila omzet sebesar itu pindah seluruhnya ke toko sendiri. Dalam praktiknya
+        perpindahan terjadi bertahap — biasanya dimulai dari pelanggan yang sudah
+        pernah membeli.
+      </p>
+      <a href="/pesan" class="tombol-utama mt-8 self-start">Minta perkiraan biaya</a>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  function hitungMargin() {
+    return {
+      omzet: 25000000,
+      potongan: 8,
+      gateway: 1.5,
+      get selisihTahunan() {
+        const beda = (this.potongan - this.gateway) / 100;
+        return Math.max(0, Math.round(this.omzet * beda * 12));
+      },
+    };
+  }
+</script>
+
+<style>
+  .isian-gelap {
+    background: color-mix(in oklab, var(--color-pearl) 8%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-pearl) 22%, transparent);
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    width: 100%;
+  }
+</style>

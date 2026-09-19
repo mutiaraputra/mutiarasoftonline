@@ -1,0 +1,216 @@
+---
+import { jenisSolusi, rentangAnggaran, situs, tautanWhatsApp } from '@/lib/site';
+---
+
+<form
+  class="grid gap-6"
+  x-data="formPesanan()"
+  x-on:submit.prevent="kirim"
+  novalidate
+  aria-describedby="catatan-form"
+>
+  <!-- Perangkap bot: tersembunyi dari manusia dan dari pembaca layar. -->
+  <div class="hidden" aria-hidden="true">
+    <label for="situsWeb">Jangan diisi</label>
+    <input id="situsWeb" type="text" name="situsWeb" tabindex="-1" autocomplete="off" x-model="data.situsWeb" />
+  </div>
+
+  <div class="grid sm:grid-cols-2 gap-6">
+    <div class="ruang-isian">
+      <label for="nama">Nama Anda <span class="wajib">*</span></label>
+      <input id="nama" name="nama" type="text" autocomplete="name" x-model="data.nama"
+        :aria-invalid="galat.nama ? 'true' : null" :class="galat.nama && 'isian-galat'" />
+      <p class="pesan-galat" x-show="galat.nama" x-text="galat.nama"></p>
+    </div>
+
+    <div class="ruang-isian">
+      <label for="perusahaan">Nama usaha / perusahaan</label>
+      <input id="perusahaan" name="perusahaan" type="text" autocomplete="organization" x-model="data.perusahaan" />
+    </div>
+  </div>
+
+  <div class="ruang-isian">
+    <label for="kontak">WhatsApp atau email <span class="wajib">*</span></label>
+    <input id="kontak" name="kontak" type="text" inputmode="text" autocomplete="tel"
+      placeholder="0857xxxxxxx atau nama@domain.com" x-model="data.kontak"
+      :aria-invalid="galat.kontak ? 'true' : null" :class="galat.kontak && 'isian-galat'" />
+    <p class="pesan-galat" x-show="galat.kontak" x-text="galat.kontak"></p>
+  </div>
+
+  <fieldset class="ruang-isian">
+    <legend>Solusi yang dibutuhkan <span class="wajib">*</span></legend>
+    <div class="grid sm:grid-cols-2 gap-3 mt-2">
+      {jenisSolusi.map((s) => (
+        <label class="kartu-pilihan">
+          <input type="radio" name="jenisSolusi" value={s.nilai} x-model="data.jenisSolusi" class="sr-only" />
+          <span class="font-semibold">{s.label}</span>
+          <span class="text-mikro text-ink/60">{s.catatan}</span>
+        </label>
+      ))}
+    </div>
+    <p class="pesan-galat" x-show="galat.jenisSolusi" x-text="galat.jenisSolusi"></p>
+  </fieldset>
+
+  <div class="ruang-isian">
+    <label for="anggaran">Perkiraan anggaran <span class="wajib">*</span></label>
+    <select id="anggaran" name="anggaran" x-model="data.anggaran"
+      :aria-invalid="galat.anggaran ? 'true' : null" :class="galat.anggaran && 'isian-galat'">
+      <option value="">Pilih rentang</option>
+      {rentangAnggaran.map((a) => <option value={a.nilai}>{a.label}</option>)}
+    </select>
+    <p class="pesan-galat" x-show="galat.anggaran" x-text="galat.anggaran"></p>
+  </div>
+
+  <div class="ruang-isian">
+    <label for="kebutuhan">Ceritakan kebutuhan Anda <span class="wajib">*</span></label>
+    <textarea id="kebutuhan" name="kebutuhan" rows="6" x-model="data.kebutuhan"
+      placeholder="Contoh: toko bahan bangunan dengan 3 kasir, stok per gudang, dan laporan yang bisa ditarik ke Accurate tiap akhir bulan."
+      :aria-invalid="galat.kebutuhan ? 'true' : null" :class="galat.kebutuhan && 'isian-galat'"></textarea>
+    <div class="flex justify-between text-mikro text-ink/50">
+      <p class="pesan-galat !mt-0" x-show="galat.kebutuhan" x-text="galat.kebutuhan"></p>
+      <span x-text="data.kebutuhan.length + ' / 4000'" class="ml-auto tabular-nums"></span>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-4 pt-2">
+    <button type="submit" class="tombol-utama" :disabled="mengirim" :aria-busy="mengirim">
+      <span x-show="!mengirim">Kirim permintaan</span>
+      <span x-show="mengirim" x-cloak>Mengirim…</span>
+    </button>
+    <a href={tautanWhatsApp('Halo Mutiara Software, saya ingin berdiskusi soal aplikasi.')} class="tombol-garis">
+      Diskusi lewat WhatsApp
+    </a>
+  </div>
+
+  <p id="catatan-form" class="text-mikro text-ink/55">
+    Kami balas dalam 1×24 jam kerja ke kontak yang Anda isi. Data hanya dipakai untuk
+    menyiapkan penawaran.
+  </p>
+
+  <!-- Status: satu wilayah live untuk berhasil maupun gagal. -->
+  <div role="status" aria-live="polite">
+    <div x-show="sukses" x-cloak class="kotak-status kotak-sukses">
+      <p class="font-semibold">Permintaan terkirim.</p>
+      <p class="text-[0.95rem]">
+        Nomor permintaan Anda <span class="font-mono" x-text="nomor"></span>.
+        Kami hubungi lewat kontak yang Anda isi dalam 1×24 jam kerja.
+      </p>
+    </div>
+
+    <div x-show="pesanGagal" x-cloak class="kotak-status kotak-gagal">
+      <p class="font-semibold">Permintaan belum terkirim.</p>
+      <p class="text-[0.95rem]" x-text="pesanGagal"></p>
+      <p class="text-[0.95rem] mt-1">
+        Anda juga bisa langsung menghubungi kami di
+        <a class="underline" href={`https://wa.me/${situs.whatsapp}`}>WhatsApp +{situs.whatsapp}</a>.
+      </p>
+    </div>
+  </div>
+</form>
+
+<script is:inline>
+  function formPesanan() {
+    return {
+      dibukaPada: Date.now(),
+      mengirim: false,
+      sukses: false,
+      nomor: '',
+      pesanGagal: '',
+      galat: {},
+      data: {
+        nama: '', perusahaan: '', kontak: '',
+        jenisSolusi: '', anggaran: '', kebutuhan: '', situsWeb: '',
+      },
+
+      async kirim() {
+        this.mengirim = true;
+        this.pesanGagal = '';
+        this.galat = {};
+
+        try {
+          const respons = await fetch('/api/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...this.data, dibukaPada: this.dibukaPada }),
+          });
+          const hasil = await respons.json();
+
+          if (!respons.ok) {
+            this.galat = hasil.galat || {};
+            this.pesanGagal = hasil.pesan || 'Terjadi gangguan. Coba lagi sebentar.';
+            const pertama = document.querySelector('[aria-invalid="true"]');
+            if (pertama) pertama.focus();
+            return;
+          }
+
+          this.sukses = true;
+          this.nomor = hasil.id || '';
+          this.data = {
+            nama: '', perusahaan: '', kontak: '',
+            jenisSolusi: '', anggaran: '', kebutuhan: '', situsWeb: '',
+          };
+        } catch (e) {
+          this.pesanGagal = 'Koneksi terputus sebelum data terkirim. Periksa jaringan lalu kirim ulang.';
+        } finally {
+          this.mengirim = false;
+        }
+      },
+    };
+  }
+</script>
+
+<style>
+  .ruang-isian { display: grid; gap: 0.4rem; }
+  .ruang-isian label,
+  .ruang-isian legend { font-weight: 600; font-size: 0.95rem; }
+  .wajib { color: var(--color-bara); }
+
+  .ruang-isian input,
+  .ruang-isian select,
+  .ruang-isian textarea {
+    width: 100%;
+    background: var(--color-pearl-2);
+    border: 1px solid var(--color-nacre);
+    border-radius: 10px;
+    padding: 0.75rem 0.9rem;
+    font: inherit;
+    transition: border-color 140ms ease;
+  }
+  .ruang-isian input:hover,
+  .ruang-isian textarea:hover { border-color: color-mix(in oklab, var(--color-kilau) 45%, var(--color-nacre)); }
+
+  .isian-galat { border-color: var(--color-bara) !important; }
+  .pesan-galat { color: var(--color-bara); font-size: 0.8125rem; margin-top: 0.15rem; }
+
+  .kartu-pilihan {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--color-nacre);
+    border-radius: var(--radius-kartu);
+    background: var(--color-pearl-2);
+    cursor: pointer;
+    transition: border-color 140ms ease, background-color 140ms ease;
+  }
+  .kartu-pilihan:hover { border-color: color-mix(in oklab, var(--color-kilau) 50%, var(--color-nacre)); }
+  .kartu-pilihan:has(input:checked) {
+    border-color: var(--color-emas);
+    background: color-mix(in oklab, var(--color-emas) 9%, var(--color-pearl-2));
+  }
+  .kartu-pilihan:has(input:focus-visible) { outline: 2px solid var(--color-kilau); outline-offset: 2px; }
+
+  .kotak-status {
+    margin-top: 0.5rem;
+    padding: 1rem 1.15rem;
+    border-radius: var(--radius-kartu);
+    border: 1px solid;
+  }
+  .kotak-sukses {
+    border-color: color-mix(in oklab, var(--color-kilau) 40%, transparent);
+    background: color-mix(in oklab, var(--color-kilau) 10%, var(--color-pearl-2));
+  }
+  .kotak-gagal {
+    border-color: color-mix(in oklab, var(--color-bara) 40%, transparent);
+    background: color-mix(in oklab, var(--color-bara) 8%, var(--color-pearl-2));
+  }
+</style>

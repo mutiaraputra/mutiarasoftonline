@@ -1,0 +1,58 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { situs, tautanWhatsApp } from '@/lib/site';
+
+const petaSrc = `https://maps.google.com/maps?q=${encodeURIComponent('mutiara komputer jogorogo')}&z=16&output=embed`;
+---
+
+<BaseLayout
+  judul="Kontak"
+  deskripsi={`Hubungi Mutiara Software di ${situs.alamat.desa}, ${situs.alamat.kabupaten}. WhatsApp +${situs.whatsapp}.`}
+>
+  <section class="wadah py-20 grid lg:grid-cols-[1fr_1.1fr] gap-14">
+    <div>
+      <h1 class="text-judul-besar font-display font-bold">Kontak</h1>
+      <p class="mt-5 text-ink/70">
+        Cara tercepat adalah WhatsApp. Untuk kebutuhan yang perlu dijelaskan panjang,
+        formulir pemesanan lebih baik — isinya langsung sampai ke meja kami.
+      </p>
+
+      <dl class="mt-10 grid gap-6">
+        <div>
+          <dt class="font-semibold">WhatsApp</dt>
+          <dd class="mt-1">
+            <a class="text-kilau underline" href={tautanWhatsApp('Halo Mutiara Software, saya ingin bertanya.')}>
+              +{situs.whatsapp}
+            </a>
+          </dd>
+        </div>
+        <div>
+          <dt class="font-semibold">Email</dt>
+          <dd class="mt-1"><a class="text-kilau underline" href={`mailto:${situs.email}`}>{situs.email}</a></dd>
+        </div>
+        <div>
+          <dt class="font-semibold">Alamat</dt>
+          <dd class="mt-1 text-ink/75">
+            <address class="not-italic leading-relaxed">
+              {situs.alamat.jalan}<br />
+              {situs.alamat.desa}, {situs.alamat.kabupaten}<br />
+              {situs.alamat.provinsi} {situs.alamat.kodePos}
+            </address>
+          </dd>
+        </div>
+      </dl>
+
+      <a href="/pesan" class="tombol-utama mt-10">Kirim kebutuhan lewat formulir</a>
+    </div>
+
+    <div class="rounded-[var(--radius-kartu)] overflow-hidden border border-nacre h-[420px] lg:h-full min-h-[320px]">
+      <iframe
+        src={petaSrc}
+        title="Peta lokasi Mutiara Software"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        class="w-full h-full border-0"
+      ></iframe>
+    </div>
+  </section>
+</BaseLayout>

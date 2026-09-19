@@ -1,0 +1,13 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PortofolioKlien from '@/components/PortofolioKlien.astro';
+import KatalogProduk from '@/components/KatalogProduk.astro';
+---
+
+<BaseLayout
+  judul="Portofolio & klien"
+  deskripsi="Industri dan lembaga yang pernah kami tangani: toko ritel, sekolah, kantor desa, koperasi, dan usaha jasa."
+>
+  <PortofolioKlien />
+  <KatalogProduk batas={6} />
+</BaseLayout>

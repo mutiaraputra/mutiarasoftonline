@@ -1,0 +1,55 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Profil from '@/components/Profil.astro';
+import PortofolioKlien from '@/components/PortofolioKlien.astro';
+import { nilai, situs } from '@/lib/site';
+---
+
+<BaseLayout
+  judul="Tentang Mutiara Software"
+  deskripsi={`Lini pengembangan perangkat lunak dari ${situs.induk}, Jogorogo, Ngawi. Membangun aplikasi untuk usaha dan lembaga sejak ${situs.berdiri}.`}
+>
+  <section class="bg-ink text-pearl tepi-nacre py-20">
+    <div class="wadah max-w-3xl">
+      <h1 class="text-judul-besar lg:text-display font-display font-bold text-pearl">
+        Kami membuka casing komputer sebelum menulis baris kode pertama
+      </h1>
+      <p class="mt-6 text-sedang text-pearl/75">
+        {situs.induk} dibuka tahun {situs.berdiri} di Jogorogo, Ngawi, sebagai lembaga
+        kursus komputer dan jasa servis. Teknisinya sudah menangani perangkat sejak
+        {situs.mulaiTeknisi}. Mutiara Software adalah lini pengembangan perangkat lunaknya.
+      </p>
+    </div>
+  </section>
+
+  <Profil />
+
+  <section class="wadah pb-8">
+    <h2 class="text-judul font-display font-semibold">Cara kami bekerja</h2>
+    <div class="mt-8 grid md:grid-cols-3 gap-8">
+      <div>
+        <p class="font-semibold">Kami datang dan melihat</p>
+        <p class="mt-2 text-[0.95rem] text-ink/70">
+          Sebelum menawarkan apa pun, kami perhatikan buku, berkas, dan kebiasaan yang
+          sudah berjalan. Aplikasi yang baik meniru alur itu, bukan melawannya.
+        </p>
+      </div>
+      <div>
+        <p class="font-semibold">Serah terima disertai pelatihan</p>
+        <p class="mt-2 text-[0.95rem] text-ink/70">
+          Kami melatih orang yang akan memakainya setiap hari, bukan hanya pemiliknya.
+          Kebiasaan lama dari usaha kursus ternyata masih berguna.
+        </p>
+      </div>
+      <div>
+        <p class="font-semibold">Sumber data tetap milik Anda</p>
+        <p class="mt-2 text-[0.95rem] text-ink/70">
+          Basis data, kode, dan dokumentasi diserahkan. Anda tidak tersandera kepada
+          kami bila suatu saat ingin pindah.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <PortofolioKlien />
+</BaseLayout>
