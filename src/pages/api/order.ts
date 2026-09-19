@@ -59,8 +59,21 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
 
   // 4. Pembatas laju per alamat IP.
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? clientAddress;
-  if (lewatBatas(ip ?? 'anon', Number(env.ORDER_RATE_LIMIT_PER_HOUR ?? 5))) {
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    request.headers.get('x-real-ip')?.trim() ??
+    clientAddress;
+
+  const rawLimit = String(env.ORDER_RATE_LIMIT_PER_HOUR ?? '30')
+    .replace(/^["']+|["']+$/g, '')
+    .trim();
+  const limit =
+    rawLimit === '0' || rawLimit.toLowerCase() === 'none' || rawLimit.toLowerCase() === 'off'
+      ? 0
+      : parseInt(rawLimit, 10) || 30;
+
+  if (limit > 0 && lewatBatas(ip ?? 'anon', limit)) {
+    console.warn(`[order] Rate limit terlampaui untuk IP: ${ip} (maksimal: ${limit}/jam)`);
     return jawab(
       {
         ok: false,

@@ -7,6 +7,11 @@ const jejak = new Map<string, number[]>();
 const JENDELA = 60 * 60 * 1000; // 1 jam
 
 export function lewatBatas(kunci: string, maksimum: number): boolean {
+  // Jika batas tidak ditentukan, <= 0, atau NaN, berarti pembatasan dinonaktifkan (unlimited/testing).
+  if (!maksimum || maksimum <= 0 || isNaN(maksimum)) {
+    return false;
+  }
+
   const sekarang = Date.now();
   const riwayat = (jejak.get(kunci) ?? []).filter((t) => sekarang - t < JENDELA);
 

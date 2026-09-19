@@ -55,10 +55,11 @@ export async function kirimNotifikasi(
   pesanan: PesananTersimpan,
   env: Record<string, string | undefined>,
 ): Promise<HasilKirim> {
-  const token = env.TELEGRAM_BOT_TOKEN;
+  const token = env.TELEGRAM_BOT_TOKEN?.replace(/^["']+|["']+$/g, '').trim();
   const tujuan = (env.TELEGRAM_CHAT_ID ?? '')
+    .replace(/^["']+|["']+$/g, '')
     .split(',')
-    .map((v) => v.trim())
+    .map((v) => v.replace(/^["']+|["']+$/g, '').trim())
     .filter(Boolean);
 
   if (!token || tujuan.length === 0) {
