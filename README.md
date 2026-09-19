@@ -212,3 +212,48 @@ tidak ada tautan mati di situs.
 - `src/lib/klien.ts` masih kosong dari testimoni; isi dengan nama dan izin yang sebenarnya.
 - `public/og/default.jpg` (1200×630) belum ada — buat sekali, dipakai semua halaman.
 - `npm run build` belum pernah dijalankan; lakukan sekali sebelum deploy pertama.
+
+
+
+Berikut kegunaan tiap variabel di .env, dikelompokkan sesuai urutan di .env.example, plus bagaimana masing-masing benar-benar dipakai di kode.
+
+Kelompok "Situs"
+PUBLIC_SITE_URL
+Alamat resmi situs. Dipakai src/lib/site.ts untuk membentuk situs.url, yang lalu dipakai BaseLayout.astro untuk menyusun URL kanonik tiap halaman, URL gambar Open Graph yang absolut, dan field url di JSON-LD ProfessionalService. Kalau kosong, kode jatuh ke nilai bawaan https://mutiarasoft.online.
+
+Satu catatan: astro.config.mjs juga punya site: 'https://mutiarasoft.online' yang ditulis manual, terpisah dari variabel ini — dipakai Astro sendiri untuk menghasilkan sitemap-index.xml. Kalau domain akhirnya berubah, dua tempat itu harus diubah bersamaan; PUBLIC_SITE_URL saja tidak cukup.
+
+PUBLIC_WHATSAPP
+Nomor WhatsApp bisnis, format internasional tanpa tanda plus (62857...). Dipakai tautanWhatsApp() untuk membuat semua tautan wa.me/... di situs — tombol di Header, Footer, Hero, halaman /pesan, /kontak, dan tiap halaman produk/layanan. Ini bukan nomor pelanggan yang mengisi formulir; itu field terpisah (kontak) yang disimpan per pesanan.
+
+Kenapa dua ini diberi awalan PUBLIC_: di Astro, hanya variabel yang diawali PUBLIC_ yang diizinkan ikut ke bundel JavaScript sisi peramban; sisanya tetap tertutup di server. Domain dan nomor WhatsApp memang bukan rahasia, jadi aman diberi awalan itu. Jangan pernah menamai token atau kata sandi dengan awalan PUBLIC_ — itu akan bocor ke kode yang bisa dibaca siapa pun lewat "View Source".
+
+Kelompok "Notifikasi Telegram"
+TELEGRAM_BOT_TOKEN
+Token bot dari @BotFather. Dipakai src/lib/telegram.ts untuk membentuk URL https://api.telegram.org/bot<TOKEN>/sendMessage. Kalau kosong, kirimNotifikasi() langsung berhenti dengan ok: false tanpa mencoba mengirim — pesanan tetap tersimpan (lihat ORDER_STORAGE), hanya notifikasinya yang tidak jalan.
+
+TELEGRAM_CHAT_ID
+Tujuan pesan masuk. Isi angka chat.id grup atau pribadi tempat bot itu jadi anggota/admin. Bisa diisi lebih dari satu, dipisah koma — kode memecahnya jadi daftar dan mengirim ke semuanya sekaligus lewat Promise.allSettled, jadi satu tujuan yang gagal tidak menggagalkan tujuan lain.
+
+Kelompok "Penyimpanan pesanan"
+ORDER_STORAGE
+Saklar yang menentukan adapter mana yang dipakai ambilRepositori() di src/lib/orders/index.ts. Tiga nilai yang dikenali:
+
+Nilai	Yang terjadi
+bridge (bawaan)	Kirim POST ke ORDER_BRIDGE_URL, ditandatangani HMAC pakai ORDER_BRIDGE_SECRET
+mysql	Sambung langsung ke MySQL pakai lima variabel DB_*
+none	Lewati penyimpanan sama sekali — dipakai saat menguji alur Telegram saja
+ORDER_BRIDGE_URL
+Alamat berkas bridge/order-bridge.php setelah diunggah ke cPanel — misalnya https://mutiarakom.my.id/api/order-bridge.php. Hanya dibaca kalau ORDER_STORAGE=bridge.
+
+ORDER_BRIDGE_SECRET
+Kunci rahasia bersama antara endpoint Astro dan order-bridge.php. Nilainya harus persis sama di dua tempat: di sini, dan di config/mutiarasoft.php yang Anda buat di server cPanel (lihat komentar di bagian atas order-bridge.php). Setiap pengiriman ditandatangani dengan HMAC-SHA256(timestamp + '.' + body, secret); kalau tanda tangannya tidak cocok atau permintaannya lebih tua dari 300 detik, PHP menolaknya. Ini yang mencegah orang lain menulis langsung ke tabel pesanan_aplikasi tanpa lewat formulir Anda.
+
+DB_HOST / DB_PORT / DB_NAME / DB_USER / DB_PASSWORD
+Kredensial MySQL standar. Hanya dipakai kalau ORDER_STORAGE=mysql — mode ini menyambung langsung dari server tempat Astro berjalan (misalnya Vercel) ke MySQL Anda. Ini alasan bridge jadi bawaan: MySQL di shared hosting cPanel biasanya hanya menerima koneksi dari IP yang di-whitelist, sementara Vercel memakai IP yang berubah-ubah setiap deploy. Mode mysql baru masuk akal kalau server aplikasi dan MySQL-nya nanti berada di jaringan yang sama (misalnya sama-sama di satu VPS).
+
+Kelompok "Anti-spam"
+ORDER_RATE_LIMIT_PER_HOUR
+Batas jumlah pengiriman formulir yang diterima dari satu alamat IP dalam satu jam berjalan. Dibaca src/pages/api/order.ts, diteruskan ke lewatBatas() di src/lib/rate-limit.ts. Kalau terlampaui, endpoint membalas status 429 dengan pesan yang mengarahkan pengunjung ke WhatsApp. Nilai bawaan 5 — naikkan kalau situs sudah ramai dan sering salah menolak pengunjung sah yang berbagi IP kantor/warnet yang sama.
+
+Satu hal praktis: berkas .env sendiri tidak pernah ikut ter-deploy — ia ada di .gitignore justru supaya rahasia tidak ikut ke Git. Untuk produksi, nilai-nilai di atas (terutama TELEGRAM_BOT_TOKEN, ORDER_BRIDGE_SECRET, dan kredensial DB) diisi lewat dasbor Environment Variables di penyedia hosting Anda (mis. Vercel → Project Settings → Environment Variables), bukan dengan mengunggah .env. .env di lokal hanya untuk npm run dev di komputer Anda.
