@@ -4,3 +4,4 @@ Disallow: /terima-kasih
 Disallow: /api/
 
 Sitemap: https://mutiarasoft.online/sitemap-index.xml
+Sitemap: https://mutiarasoft.online/sitemap.xml

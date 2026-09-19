@@ -1,0 +1,493 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { situs } from '@/lib/site';
+
+const layananList = (await getCollection('layanan')).sort((a, b) => a.data.urutan - b.data.urutan);
+const produkList = (await getCollection('produk')).sort((a, b) => a.data.urutan - b.data.urutan);
+const demoList = (await getCollection('demo')).sort((a, b) => a.data.urutan - b.data.urutan);
+
+const halamanUtama = [
+  {
+    nama: 'Beranda',
+    href: '/',
+    ringkas: 'Halaman utama Mutiara Software, ikhtisar layanan, produk unggulan, prinsip kerja, dan profil usaha.',
+    label: 'Utama',
+  },
+  {
+    nama: 'Tentang Mutiara Software',
+    href: '/tentang',
+    ringkas: `Kisah perjalanan sejak teknisi ${situs.mulaiTeknisi} dan berdiri ${situs.berdiri} di Jogorogo, Ngawi, serta tiga nilai utama (Kejujuran, Maksimal, Pengalaman).`,
+    label: 'Profil',
+  },
+  {
+    nama: 'Portofolio Klien',
+    href: '/portofolio',
+    ringkas: 'Dokumentasi implementasi nyata pada toko retail, grosir, sekolah, dan kantor desa di Jawa Timur dan sekitarnya.',
+    label: 'Bukti Kerja',
+  },
+  {
+    nama: 'Hubungi Kami',
+    href: '/kontak',
+    ringkas: 'Alamat fisik kantor di Jogorogo Ngawi, konsultasi langsung via WhatsApp, email resmi, dan peta lokasi.',
+    label: 'Kontak',
+  },
+  {
+    nama: 'Pesan / Konsultasi Aplikasi',
+    href: '/pesan',
+    ringkas: 'Formulir estimasi kebutuhan sistem baru, pilihan modul, rentang anggaran, dan spesifikasi proyek kustom.',
+    label: 'Pemesanan',
+  },
+];
+
+const edukasiList = [
+  {
+    nama: 'Website Sendiri vs Marketplace',
+    href: '/edukasi/website-sendiri-vs-marketplace',
+    ringkas: 'Analisis mendalam mengapa usaha Anda membutuhkan toko online berdomain sendiri dibanding hanya bergantung pada biaya komisi marketplace.',
+    label: 'Edukasi Bisnis',
+  },
+];
+
+const indeksTeknis = [
+  {
+    nama: 'Indeks Sitemap XML (Utama)',
+    href: '/sitemap-index.xml',
+    ringkas: 'Berkas indeks peta situs resmi untuk Google Search Console dan robot perayap mesin pencari.',
+    format: 'XML Index',
+  },
+  {
+    nama: 'Data Entri Sitemap XML',
+    href: '/sitemap-0.xml',
+    ringkas: 'Daftar seluruh URL website Mutiara Software lengkap dengan metadata prioritas dan tanggal pembaruan.',
+    format: 'XML Urlset',
+  },
+  {
+    nama: 'Alias Sitemap XML Standar',
+    href: '/sitemap.xml',
+    ringkas: 'Rute pengalihan standar (301/308) menuju indeks sitemap untuk crawler otomatis.',
+    format: 'Redirect',
+  },
+  {
+    nama: 'Berkas Aturan Robots.txt',
+    href: '/robots.txt',
+    ringkas: 'Instruksi perayapan web crawler untuk memandu bot ke konten publik dan melindungi endpoint privat.',
+    format: 'Text',
+  },
+];
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Beranda',
+      item: 'https://mutiarasoft.online/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Peta Situs (Sitemap)',
+      item: 'https://mutiarasoft.online/sitemap',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  judul="Peta Situs (Sitemap) — Mutiara Software"
+  deskripsi="Peta situs resmi Mutiara Software. Temukan daftar lengkap seluruh halaman, layanan pengembangan aplikasi, katalog produk, demo interaktif, dan indeks XML."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} is:inline />
+  </Fragment>
+
+  <!-- Hero Header -->
+  <section class="bg-ink text-pearl tepi-nacre py-16 md:py-20">
+    <div class="wadah max-w-4xl">
+      <nav aria-label="Breadcrumb" class="text-mikro text-pearl/60 mb-4">
+        <ol class="flex items-center gap-2">
+          <li><a href="/" class="hover:text-emas transition-colors">Beranda</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-emas font-medium">Peta Situs</li>
+        </ol>
+      </nav>
+
+      <h1 class="text-judul-besar lg:text-display font-display font-bold text-pearl">
+        Peta Situs (Sitemap)
+      </h1>
+      <p class="mt-5 text-sedang text-pearl/75 leading-relaxed">
+        Daftar terstruktur seluruh halaman, layanan pengembangan perangkat lunak, produk jadi, dan berkas teknis {situs.nama}.
+      </p>
+
+      <!-- Statistik Ringkas -->
+      <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 text-mikro">
+        <div class="bg-ink-2/70 border border-pearl/10 rounded-lg p-3">
+          <p class="text-pearl/50">Halaman Utama</p>
+          <p class="text-sedang font-display font-bold text-emas mt-0.5">{halamanUtama.length + edukasiList.length}</p>
+        </div>
+        <div class="bg-ink-2/70 border border-pearl/10 rounded-lg p-3">
+          <p class="text-pearl/50">Jalur Layanan</p>
+          <p class="text-sedang font-display font-bold text-emas mt-0.5">{layananList.length}</p>
+        </div>
+        <div class="bg-ink-2/70 border border-pearl/10 rounded-lg p-3">
+          <p class="text-pearl/50">Katalog Produk</p>
+          <p class="text-sedang font-display font-bold text-emas mt-0.5">{produkList.length}</p>
+        </div>
+        <div class="bg-ink-2/70 border border-pearl/10 rounded-lg p-3">
+          <p class="text-pearl/50">Demo & Mesin Cari</p>
+          <p class="text-sedang font-display font-bold text-emas mt-0.5">{demoList.length + indeksTeknis.length}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Konten Utama Sitemap dengan Pencarian Cepat Alpine.js -->
+  <section
+    class="wadah py-14"
+    x-data="{
+      cari: '',
+      cocok(teks) {
+        if (!this.cari.trim()) return true;
+        return teks.toLowerCase().includes(this.cari.toLowerCase().trim());
+      }
+    }"
+  >
+    <!-- Kolom Pencarian Cepat -->
+    <div class="max-w-xl mx-auto mb-14">
+      <div class="relative">
+        <label for="pencarian-sitemap" class="sr-only">Cari halaman atau produk dalam peta situs</label>
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ink/40">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input
+          id="pencarian-sitemap"
+          type="search"
+          x-model="cari"
+          placeholder="Ketik untuk memfilter sitemap (mis. kasir, sekolah, desa, toko)..."
+          class="w-full pl-11 pr-10 py-3.5 bg-pearl-2 border border-nacre rounded-full text-dasar shadow-xs focus:border-kilau focus:outline-none transition-colors"
+        />
+        <button
+          type="button"
+          x-show="cari.length > 0"
+          x-on:click="cari = ''"
+          class="absolute inset-y-0 right-0 pr-4 flex items-center text-ink/40 hover:text-ink transition-colors"
+          title="Bersihkan pencarian"
+          aria-label="Bersihkan pencarian"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <p x-show="cari.length > 0" class="text-mikro text-ink/60 text-center mt-2" x-cloak>
+        Menyaring hasil dengan kata kunci: <strong class="text-ink" x-text="cari"></strong>
+      </p>
+    </div>
+
+    <div class="space-y-16">
+      <!-- 1. Halaman Utama & Profil Usaha -->
+      <div>
+        <div class="flex items-center gap-3 border-b border-nacre pb-3 mb-6">
+          <span class="w-3 h-3 rounded-full bg-emas inline-block"></span>
+          <h2 class="text-judul font-display font-semibold">1. Halaman Utama & Profil Perusahaan</h2>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {halamanUtama.map((h) => (
+            <article
+              class="relative bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-6 hover:border-kilau/50 transition-all hover:shadow-xs flex flex-col justify-between"
+              x-show={`cocok('${h.nama} ${h.ringkas} ${h.label}')`}
+            >
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-mikro font-medium px-2.5 py-0.5 rounded-full bg-pearl border border-nacre text-ink/75">
+                    {h.label}
+                  </span>
+                  <span class="text-mikro font-mono text-ink/40">{h.href}</span>
+                </div>
+                <h3 class="font-display font-semibold text-sedang text-ink">
+                  <a href={h.href} class="after:absolute after:inset-0 hover:text-kilau transition-colors">
+                    {h.nama}
+                  </a>
+                </h3>
+                <p class="mt-2 text-mikro text-ink/70 leading-relaxed">{h.ringkas}</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-nacre/50 flex items-center justify-between text-mikro font-medium text-kilau">
+                <span>Kunjungi halaman</span>
+                <span aria-hidden="true">→</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <!-- 2. Layanan Pengembangan Perangkat Lunak -->
+      <div>
+        <div class="flex items-center justify-between border-b border-nacre pb-3 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="w-3 h-3 rounded-full bg-kilau inline-block"></span>
+            <h2 class="text-judul font-display font-semibold">2. Layanan Pengembangan Software</h2>
+          </div>
+          <a href="/layanan" class="text-mikro font-medium text-kilau hover:underline">
+            Lihat ikhtisar layanan →
+          </a>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {layananList.map((l) => (
+            <article
+              class="relative bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-6 hover:border-kilau/50 transition-all hover:shadow-xs"
+              x-show={`cocok('${l.data.nama} ${l.data.ringkas} ${l.data.cocokUntuk.join(' ')}')`}
+            >
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-mikro font-medium px-2.5 py-0.5 rounded-full bg-kilau/10 text-kilau">
+                  Layanan Khusus
+                </span>
+                <span class="text-mikro font-mono text-ink/40">/layanan/{l.id}</span>
+              </div>
+              <h3 class="font-display font-semibold text-sedang text-ink">
+                <a href={`/layanan/${l.id}`} class="after:absolute after:inset-0 hover:text-kilau transition-colors">
+                  {l.data.nama}
+                </a>
+              </h3>
+              <p class="mt-2 text-[0.95rem] text-ink/70 leading-relaxed">{l.data.ringkas}</p>
+              <div class="mt-4 flex flex-wrap gap-1.5">
+                {l.data.cocokUntuk.slice(0, 3).map((item) => (
+                  <span class="text-[0.75rem] px-2 py-0.5 rounded bg-pearl text-ink/60 border border-nacre/60">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <!-- 3. Katalog Produk Siap Pakai -->
+      <div>
+        <div class="flex items-center justify-between border-b border-nacre pb-3 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="w-3 h-3 rounded-full bg-emas inline-block"></span>
+            <h2 class="text-judul font-display font-semibold">3. Katalog Produk & Solusi Siap Pakai</h2>
+          </div>
+          <a href="/produk" class="text-mikro font-medium text-kilau hover:underline">
+            Katalog lengkap →
+          </a>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {produkList.map((p) => (
+            <article
+              class="relative bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-6 hover:border-kilau/50 transition-all hover:shadow-xs flex flex-col justify-between"
+              x-show={`cocok('${p.data.nama} ${p.data.ringkas} ${p.data.kategori} ${p.data.platform.join(' ')}')`}
+            >
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-mikro font-medium px-2.5 py-0.5 rounded-full bg-emas/15 text-ink capitalize">
+                    {p.data.kategori}
+                  </span>
+                  <div class="flex gap-1 text-[0.72rem] font-mono text-ink/50 uppercase">
+                    {p.data.platform.map((plat) => (
+                      <span class="px-1.5 py-0.2 bg-pearl border border-nacre rounded">{plat}</span>
+                    ))}
+                  </div>
+                </div>
+                <h3 class="font-display font-semibold text-sedang text-ink">
+                  <a href={`/produk/${p.id}`} class="after:absolute after:inset-0 hover:text-kilau transition-colors">
+                    {p.data.nama}
+                  </a>
+                </h3>
+                <p class="mt-2 text-mikro text-ink/70 leading-relaxed">{p.data.ringkas}</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-nacre/50 flex items-center justify-between text-mikro font-medium text-kilau">
+                <span>Detail modul produk</span>
+                <span aria-hidden="true">→</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <!-- 4. Demo Interaktif & Simulasi -->
+      <div>
+        <div class="flex items-center justify-between border-b border-nacre pb-3 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="w-3 h-3 rounded-full bg-kilau inline-block"></span>
+            <h2 class="text-judul font-display font-semibold">4. Demo Interaktif & Simulasi</h2>
+          </div>
+          <a href="/demo" class="text-mikro font-medium text-kilau hover:underline">
+            Semua demo →
+          </a>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <article
+            class="relative bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-6 hover:border-kilau/50 transition-all hover:shadow-xs"
+            x-show="cocok('Demo interaktif katalog simulasi')"
+          >
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-mikro font-medium px-2.5 py-0.5 rounded-full bg-pearl border border-nacre text-ink/75">
+                Etalase Demo
+              </span>
+              <span class="text-mikro font-mono text-ink/40">/demo</span>
+            </div>
+            <h3 class="font-display font-semibold text-sedang text-ink">
+              <a href="/demo" class="after:absolute after:inset-0 hover:text-kilau transition-colors">
+                Etalase Demo Interaktif
+              </a>
+            </h3>
+            <p class="mt-2 text-mikro text-ink/70">
+              Daftar seluruh simulasi aplikasi nyata yang siap dicoba langsung tanpa instalasi perangkat.
+            </p>
+          </article>
+
+          <article
+            class="relative bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-6 hover:border-kilau/50 transition-all hover:shadow-xs"
+            x-show="cocok('Demo Kasir POS Toko Simulator')"
+          >
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-mikro font-medium px-2.5 py-0.5 rounded-full bg-kilau/10 text-kilau">
+                Simulator Langsung
+              </span>
+              <span class="text-mikro font-mono text-ink/40">/demo/kasir</span>
+            </div>
+            <h3 class="font-display font-semibold text-sedang text-ink">
+              <a href="/demo/kasir" class="after:absolute after:inset-0 hover:text-kilau transition-colors">
+                Simulasi Kasir POS Toko
+              </a>
+            </h3>
+            <p class="mt-2 text-mikro text-ink/70">
+              Uji alur transaksi kasir, input barcode, diskon bertingkat, dan cetak struk langsung di browser.
+            </p>
+          </article>
+
+          {demoList.map((d) => (
+            <article
+              class="relative bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-6 hover:border-kilau/50 transition-all hover:shadow-xs"
+              x-show={`cocok('${d.data.nama} ${d.data.ringkas}')`}
+            >
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class={`text-mikro font-medium px-2.5 py-0.5 rounded-full ${d.data.siap ? 'bg-kilau/10 text-kilau' : 'bg-pearl border border-nacre text-ink/50'}`}>
+                  {d.data.siap ? 'Siap Diuji' : 'Segera Hadir'}
+                </span>
+                <span class="text-mikro font-mono text-ink/40">Koleksi Demo</span>
+              </div>
+              <h3 class="font-display font-semibold text-sedang text-ink">
+                <a href={d.data.siap ? d.data.tautan : '/demo'} class="after:absolute after:inset-0 hover:text-kilau transition-colors">
+                  {d.data.nama}
+                </a>
+              </h3>
+              <p class="mt-2 text-mikro text-ink/70">{d.data.ringkas}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <!-- 5. Artikel & Edukasi Usaha -->
+      <div>
+        <div class="flex items-center gap-3 border-b border-nacre pb-3 mb-6">
+          <span class="w-3 h-3 rounded-full bg-emas inline-block"></span>
+          <h2 class="text-judul font-display font-semibold">5. Panduan & Edukasi Digital</h2>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {edukasiList.map((e) => (
+            <article
+              class="relative bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-6 hover:border-kilau/50 transition-all hover:shadow-xs"
+              x-show={`cocok('${e.nama} ${e.ringkas} ${e.label}')`}
+            >
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-mikro font-medium px-2.5 py-0.5 rounded-full bg-pearl border border-nacre text-ink/75">
+                  {e.label}
+                </span>
+                <span class="text-mikro font-mono text-ink/40">{e.href}</span>
+              </div>
+              <h3 class="font-display font-semibold text-sedang text-ink">
+                <a href={e.href} class="after:absolute after:inset-0 hover:text-kilau transition-colors">
+                  {e.nama}
+                </a>
+              </h3>
+              <p class="mt-2 text-[0.95rem] text-ink/70 leading-relaxed">{e.ringkas}</p>
+              <div class="mt-4 pt-3 border-t border-nacre/50 flex items-center justify-between text-mikro font-medium text-kilau">
+                <span>Baca panduan lengkap</span>
+                <span aria-hidden="true">→</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <!-- 6. Indeks Mesin Pencari & Pengembang (Search Engine Index) -->
+      <div>
+        <div class="flex items-center gap-3 border-b border-nacre pb-3 mb-6">
+          <span class="w-3 h-3 rounded-full bg-ink inline-block"></span>
+          <h2 class="text-judul font-display font-semibold">6. Berkas Indeks Mesin Pencari (Search Engine Feeds)</h2>
+        </div>
+        <p class="text-mikro text-ink/65 mb-4 max-w-2xl">
+          Berkas teknis yang dipakai oleh bot perayap mesin pencari (Googlebot, Bingbot, dll) untuk mengindeks seluruh pembaruan halaman situs ini.
+        </p>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {indeksTeknis.map((item) => (
+            <div
+              class="bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-5 hover:border-kilau/40 transition-colors flex flex-col justify-between"
+              x-show={`cocok('${item.nama} ${item.format} ${item.href}')`}
+            >
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[0.72rem] font-mono px-2 py-0.5 rounded bg-ink/5 text-ink font-semibold">
+                    {item.format}
+                  </span>
+                  <span class="text-mikro font-mono text-ink/40">{item.href}</span>
+                </div>
+                <h3 class="font-display font-semibold text-dasar text-ink">
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener"
+                    class="hover:text-kilau transition-colors inline-flex items-center gap-1.5"
+                  >
+                    <span>{item.nama}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-ink/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                </h3>
+                <p class="mt-2 text-mikro text-ink/65 leading-relaxed">{item.ringkas}</p>
+              </div>
+              <div class="mt-4 pt-2">
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener"
+                  class="text-mikro font-medium text-kilau hover:underline inline-flex items-center gap-1"
+                >
+                  Buka berkas raw →
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Banner Ajakan Konsultasi -->
+    <div class="mt-20 bg-ink text-pearl rounded-[var(--radius-kartu)] p-8 sm:p-12 border border-pearl/10 flex flex-col sm:flex-row items-center justify-between gap-8">
+      <div class="max-w-xl">
+        <h2 class="text-sedang sm:text-judul font-display font-bold text-pearl">
+          Tidak menemukan modul atau fitur yang Anda cari?
+        </h2>
+        <p class="mt-2 text-mikro sm:text-dasar text-pearl/75">
+          Kami menyediakan jalur pembuatan aplikasi kustom yang dirancang persis mengikuti alur kerja dan pembukuan usaha Anda.
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="/pesan" class="tombol-utama">
+          Konsultasikan Kebutuhan
+        </a>
+        <a href="/kontak" class="tombol-garis text-pearl">
+          Hubungi Kantor
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

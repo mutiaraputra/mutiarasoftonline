@@ -25,6 +25,7 @@ const tahun = new Date().getFullYear();
           <li><a href={item.href} class="hover:text-emas transition-colors">{item.label}</a></li>
         ))}
         <li><a href="/pesan" class="hover:text-emas transition-colors">Pesan aplikasi</a></li>
+        <li><a href="/sitemap" class="hover:text-emas transition-colors">Peta Situs</a></li>
       </ul>
     </nav>
 
@@ -45,8 +46,15 @@ const tahun = new Date().getFullYear();
   </div>
 
   <div class="border-t border-pearl/10">
-    <p class="wadah py-5 text-mikro text-pearl/50">
-      © {tahun} {situs.nama}. Seluruh hak cipta dilindungi.
-    </p>
+    <div class="wadah py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-mikro text-pearl/50">
+      <p>
+        © {tahun} {situs.nama}. Seluruh hak cipta dilindungi.
+      </p>
+      <div class="flex items-center gap-4">
+        <a href="/sitemap" class="hover:text-emas transition-colors">Peta Situs</a>
+        <span aria-hidden="true">•</span>
+        <a href="/sitemap-index.xml" target="_blank" rel="noopener" class="hover:text-emas transition-colors">Sitemap XML</a>
+      </div>
+    </div>
   </div>
 </footer>
