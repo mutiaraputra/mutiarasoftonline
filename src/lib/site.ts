@@ -1,11 +1,29 @@
+function bersihkanUrl(url?: string): string {
+  const bawaan = 'https://mutiarasoft.online';
+  if (!url || typeof url !== 'string') return bawaan;
+  let bersih = url.trim().replace(/^["']+|["']+$/g, '').trim();
+  if (!bersih) return bawaan;
+  if (!/^https?:\/\//i.test(bersih)) {
+    bersih = `https://${bersih}`;
+  }
+  return bersih.replace(/\/+$/, '');
+}
+
+function bersihkanKontak(kontak?: string): string {
+  const bawaan = '6285755080250';
+  if (!kontak || typeof kontak !== 'string') return bawaan;
+  const bersih = kontak.trim().replace(/^["']+|["']+$/g, '').replace(/\D/g, '');
+  return bersih || bawaan;
+}
+
 export const situs = {
   nama: 'Mutiara Software',
   merek: 'MutiaraSoft',
   induk: 'Mutiara Komputer (LPK Mutiara)',
   deskripsi:
     'Mutiara Software membangun aplikasi kasir, sistem informasi sekolah dan desa, serta website toko online untuk usaha di Indonesia — lengkap dengan integrasi akuntansi, payment gateway, dan cetak nota.',
-  url: import.meta.env.PUBLIC_SITE_URL ?? 'https://mutiarasoft.online',
-  whatsapp: import.meta.env.PUBLIC_WHATSAPP ?? '6285755080250',
+  url: bersihkanUrl(import.meta.env.PUBLIC_SITE_URL),
+  whatsapp: bersihkanKontak(import.meta.env.PUBLIC_WHATSAPP),
   email: 'info@mutiarakomputer.my.id',
   alamat: {
     jalan: 'Jl. Raya Jogorogo – Ngawi Km. 1,5 (samping PDAM), Dsn. Genggong RT 003/003',

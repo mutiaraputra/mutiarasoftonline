@@ -20,8 +20,24 @@ const {
   noindex = false,
 } = Astro.props;
 
-const kanonik = new URL(Astro.url.pathname, situs.url).href;
-const gambarPenuh = new URL(gambar, situs.url).href;
+const basisUrl = situs.url || (Astro.site ? Astro.site.href : 'https://mutiarasoft.online');
+
+let kanonik: string;
+try {
+  kanonik = new URL(Astro.url.pathname, basisUrl).href;
+} catch {
+  kanonik = `${basisUrl.replace(/\/+$/, '')}${Astro.url.pathname}`;
+}
+
+let gambarPenuh: string;
+try {
+  gambarPenuh = new URL(gambar, basisUrl).href;
+} catch {
+  gambarPenuh = gambar.startsWith('http')
+    ? gambar
+    : `${basisUrl.replace(/\/+$/, '')}/${gambar.replace(/^\/+/, '')}`;
+}
+
 const judulPenuh = judul === situs.nama ? judul : `${judul} — ${situs.nama}`;
 
 const dataTerstruktur = {

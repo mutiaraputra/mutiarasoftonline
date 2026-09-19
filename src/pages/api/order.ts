@@ -76,7 +76,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     dibuatPada: new Date().toISOString(),
     ip: ip ?? null,
     userAgent: request.headers.get('user-agent'),
-    sumber: new URL(request.url).origin,
+    sumber: (() => {
+      try {
+        return new URL(request.url).origin;
+      } catch {
+        return env.PUBLIC_SITE_URL ?? 'https://mutiarasoft.online';
+      }
+    })(),
   };
 
   // 5. Simpan dulu (sumber kebenaran), baru beri tahu.
