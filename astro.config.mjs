@@ -19,6 +19,7 @@ export default defineConfig({
   redirects: {
     '/sitemap.xml': '/sitemap-index.xml',
     '/peta-situs': '/sitemap',
+    '/produk/sistem-informasi-sekolah': '/produk/lms-learning-management-system',
   },
 
   integrations: [
