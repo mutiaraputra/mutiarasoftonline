@@ -24,7 +24,7 @@ export const situs = {
     'Mutiara Software membangun aplikasi kasir, sistem informasi sekolah dan desa, serta website toko online untuk usaha di Indonesia — lengkap dengan integrasi akuntansi, payment gateway, dan cetak nota.',
   url: bersihkanUrl(import.meta.env.PUBLIC_SITE_URL),
   whatsapp: bersihkanKontak(import.meta.env.PUBLIC_WHATSAPP),
-  email: 'info@mutiarakomputer.my.id',
+  email: 'admin@mutiarasoft.online',
   alamat: {
     jalan: 'Jl. Raya Jogorogo – Ngawi Km. 1,5 (samping PDAM), Dsn. Genggong RT 003/003',
     desa: 'Ds./Kec. Jogorogo',
