@@ -87,13 +87,15 @@ import { jenisSolusi, rentangAnggaran, situs, tautanWhatsApp } from '@/lib/site'
     menyiapkan penawaran.
   </p>
 
-  <!-- Status: satu wilayah live untuk berhasil maupun gagal. -->
+  <!-- Status: satu wilayah live untuk berhasil maupun gagal.
+       Keberhasilan akan mengarahkan pelanggan ke halaman terima-kasih,
+       jadi kotak ini hanya tampil sebentar sebagai fallback. -->
   <div role="status" aria-live="polite">
     <div x-show="sukses" x-cloak class="kotak-status kotak-sukses">
       <p class="font-semibold">Permintaan terkirim.</p>
       <p class="text-[0.95rem]">
-        Nomor permintaan Anda <span class="font-mono" x-text="nomor"></span>.
-        Kami hubungi lewat kontak yang Anda isi dalam 1×24 jam kerja.
+        Mengarahkan ke halaman konfirmasi
+        (<span class="font-mono" x-text="nomor"></span>)…
       </p>
     </div>
 
@@ -149,10 +151,19 @@ import { jenisSolusi, rentangAnggaran, situs, tautanWhatsApp } from '@/lib/site'
             nama: '', perusahaan: '', kontak: '',
             jenisSolusi: '', anggaran: '', kebutuhan: '', situsWeb: '',
           };
+
+          // Arahkan pelanggan ke halaman terima-kasih dengan nomor
+          // pesanan sebagai parameter URL. Penundaan singkat memberi
+          // waktu kotak status terbaca oleh pembaca layar.
+          const tujuan = this.nomor
+            ? `/terima-kasih?id=${encodeURIComponent(this.nomor)}`
+            : '/terima-kasih';
+          setTimeout(() => { window.location.assign(tujuan); }, 600);
         } catch (e) {
           this.pesanGagal = 'Koneksi terputus sebelum data terkirim. Periksa jaringan lalu kirim ulang.';
         } finally {
-          this.mengirim = false;
+          // Jangan buka tombol lagi — kalau sukses kita sudah pindah halaman.
+          if (!this.sukses) this.mengirim = false;
         }
       },
     };

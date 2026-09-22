@@ -1,20 +1,227 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { situs, tautanWhatsApp } from '@/lib/site';
+
+// Halaman tujuan setelah pelanggan berhasil mengirim formulir pesanan.
+// Bisa dibuka langsung (tanpa id) sebagai halaman konfirmasi umum,
+// atau dengan ?id=... untuk menampilkan nomor pesanan spesifik.
+const url = Astro.url;
+const idPesanan = (url.searchParams.get('id') ?? '').trim();
+const sumber = (url.searchParams.get('dari') ?? '').trim().toLowerCase();
+
+// Validasi ringan: id harus mengikuti pola MS-YYMMDDD-XXXXXX. Jika tidak,
+// kita abaikan saja supaya URL acak tidak menampilkan ID palsu.
+const polaId = /^MS-\d{6}-[a-z0-9]{6}$/i;
+const tampilkanId = polaId.test(idPesanan);
+
+const pesanSukses =
+  sumber === 'produk'
+    ? 'Minat Anda sudah kami catat.'
+    : 'Permintaan Anda sudah masuk.';
+
+const whatsappPesan = tampilkanId
+  ? `Halo, saya baru saja mengirim permintaan lewat website (nomor: ${idPesanan}). Saya ingin konfirmasi.`
+  : 'Halo, saya baru mengirim permintaan lewat website.';
 ---
 
-<BaseLayout judul="Permintaan terkirim" noindex={true}>
-  <section class="wadah py-28 max-w-xl text-center">
-    <h1 class="text-judul-besar font-display font-bold">Permintaan Anda sudah masuk</h1>
-    <p class="mt-5 text-ink/70">
-      Kami balas ke kontak yang Anda isi dalam 1×24 jam kerja. Kalau butuh lebih cepat,
-      hubungi saja langsung.
-    </p>
-    <div class="mt-9 flex flex-wrap justify-center gap-4">
-      <a href={tautanWhatsApp('Halo, saya baru mengirim permintaan lewat website.')} class="tombol-utama">
-        WhatsApp +{situs.whatsapp}
-      </a>
-      <a href="/" class="tombol-garis text-ink">Kembali ke beranda</a>
+<BaseLayout
+  judul={tampilkanId ? `Pesanan ${idPesanan} diterima` : 'Permintaan terkirim'}
+  deskripsi="Halaman konfirmasi setelah permintaan pesanan atau pembelian berhasil dikirim."
+  noindex={true}
+>
+  <!-- ============ HERO KONFIRMASI ============ -->
+  <section class="bg-ink text-pearl tepi-nacre pt-14 pb-20 lg:pt-20 lg:pb-28">
+    <div class="wadah max-w-3xl text-center">
+      <div
+        class="mx-auto size-20 rounded-full bg-kilau/15 border border-kilau/40 grid place-items-center"
+        aria-hidden="true"
+      >
+        <svg viewBox="0 0 48 48" class="size-10 text-kilau" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 24 L20 34 L38 14" />
+        </svg>
+      </div>
+
+      <p class="mt-7 text-emas font-semibold tracking-widest text-mikro uppercase">
+        Berhasil terkirim
+      </p>
+      <h1 class="mt-3 text-judul-besar lg:text-display font-display font-bold text-pearl text-balance">
+        Terima kasih.
+      </h1>
+      <p class="mt-5 text-sedang text-pearl/80 text-pretty">
+        {pesanSukses} Kami balas ke kontak yang Anda isi dalam 1×24 jam kerja.
+      </p>
+
+      {tampilkanId && (
+        <div
+          class="mt-10 mx-auto max-w-md rounded-[var(--radius-kartu)] border border-nacre/30 bg-ink-2/60 backdrop-blur px-5 py-5"
+          data-card-pesanan
+        >
+          <p class="text-mikro text-pearl/60 uppercase tracking-widest">Nomor permintaan</p>
+          <div class="mt-2 flex items-center justify-between gap-3">
+            <code
+              class="font-mono text-judul font-display font-semibold text-emas select-all"
+              data-id-pesanan
+            >
+              {idPesanan}
+            </code>
+            <button
+              type="button"
+              class="tombol-salin rounded-full px-3 py-1.5 text-mikro"
+              data-target={idPesanan}
+              aria-label="Salin nomor permintaan"
+            >
+              <span data-label-default>Salin</span>
+              <span data-label-sukses class="hidden">Tersalin ✓</span>
+            </button>
+          </div>
+          <p class="mt-3 text-[0.95rem] text-pearl/65">
+            Simpan nomor ini untuk referensi saat kami menghubungi Anda kembali.
+          </p>
+        </div>
+      )}
+
+      <div class="mt-10 flex flex-wrap justify-center gap-3">
+        <a
+          href={tautanWhatsApp(whatsappPesan)}
+          class="tombol-utama"
+        >
+          <svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true">
+            <path d="M20.52 3.48A11.78 11.78 0 0 0 12.04 0C5.5 0 .16 5.34.16 11.9c0 2.1.55 4.14 1.6 5.94L0 24l6.34-1.66a11.86 11.86 0 0 0 5.7 1.45h.01c6.55 0 11.88-5.34 11.88-11.9 0-3.18-1.24-6.17-3.41-8.4ZM12.05 21.7h-.01a9.8 9.8 0 0 1-4.99-1.37l-.36-.21-3.76.99 1-3.66-.23-.37a9.78 9.78 0 0 1-1.5-5.18c0-5.42 4.41-9.83 9.84-9.83 2.63 0 5.1 1.03 6.96 2.88a9.78 9.78 0 0 1 2.88 6.95c0 5.42-4.41 9.83-9.83 9.83Zm5.39-7.36c-.3-.15-1.74-.86-2.01-.96-.27-.1-.46-.15-.66.15s-.76.96-.93 1.16c-.17.2-.34.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.74-1.65-2.04-.17-.3-.02-.46.13-.61.13-.13.3-.34.46-.51.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.58-.49-.5-.66-.51-.17-.01-.37-.01-.57-.01s-.52.07-.79.37c-.27.3-1.04 1.02-1.04 2.49s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.62.71.23 1.36.2 1.87.12.57-.08 1.74-.71 1.99-1.4.25-.69.25-1.27.17-1.4-.07-.13-.27-.2-.57-.35Z" />
+          </svg>
+          WhatsApp +{situs.whatsapp}
+        </a>
+        <a href="/produk" class="tombol-garis text-pearl">Lihat produk lain</a>
+        <a href="/" class="tombol-garis text-pearl/70">Kembali ke beranda</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LANGKAH SELANJUTNYA ============ -->
+  <section class="wadah py-16 lg:py-24">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-judul font-display font-semibold text-center">Apa yang terjadi selanjutnya</h2>
+      <p class="mt-4 text-center text-ink/70 text-pretty">
+        Setelah permintaan masuk, tim kami akan meninjaunya dan menghubungi Anda.
+        Tidak perlu menunggu — kami yang akan datang.
+      </p>
+
+      <ol class="mt-12 grid gap-6">
+        {[
+          {
+            judul: 'Permintaan masuk ke sistem kami',
+            catatan: 'Data tersimpan dan notifikasi internal langsung terkirim. Tidak ada yang lolos.',
+            ikon: 'inbox',
+          },
+          {
+            judul: 'Tim menajamkan kebutuhan Anda',
+            catatan: 'Kami membaca detail yang Anda tulis dan menyiapkan pertanyaan yang relevan.',
+            ikon: 'kaca',
+          },
+          {
+            judul: 'Kami menghubungi lewat kontak Anda',
+            catatan: 'WhatsApp atau email — sesuai yang Anda isi di formulir.',
+            ikon: 'telepon',
+          },
+          {
+            judul: 'Penawaran dan jadwal serah-terima',
+            catatan: 'Lingkup kerja, biaya, dan tanggal yang mengikat — baru mulai setelah Anda setuju.',
+            ikon: 'kontrak',
+          },
+        ].map((langkah, idx) => (
+          <li class="grid grid-cols-[auto_1fr] gap-5 items-start bg-pearl-2 border border-nacre rounded-[var(--radius-kartu)] p-5 sm:p-6">
+            <span
+              class="size-12 rounded-full bg-emas/15 border border-emas/40 text-emas grid place-items-center font-display font-bold shrink-0"
+              aria-hidden="true"
+            >
+              {idx + 1}
+            </span>
+            <div>
+              <p class="font-semibold text-sedang">{langkah.judul}</p>
+              <p class="mt-2 text-ink/70 text-[0.95rem]">{langkah.catatan}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ BANTUAN CEPAT ============ -->
+  <section class="bg-pearl-2 border-t border-nacre">
+    <div class="wadah py-16 lg:py-20">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-judul font-display font-semibold">Butuh respons lebih cepat?</h2>
+        <p class="mt-4 text-ink/70">
+          Lewati antrian formulir — langsung bicara dengan tim kami via WhatsApp.
+          Cocok untuk kebutuhan yang sifatnya mendesak.
+        </p>
+        <a
+          href={tautanWhatsApp('Halo Mutiara Software, saya butuh diskusi cepat untuk proyek saya.')}
+          class="tombol-utama mt-6"
+        >
+          Chat langsung di WhatsApp
+        </a>
+        <p class="mt-6 text-mikro text-ink/55">
+          Kami balas dalam 1×24 jam kerja · Senin–Jumat · 09.00–17.00 WIB
+        </p>
+      </div>
     </div>
   </section>
 </BaseLayout>
+
+<script is:inline>
+  // Salin nomor pesanan ke clipboard dengan fallback untuk browser lama.
+  (() => {
+    const tombol = document.querySelector('[data-card-pesanan] button[data-target]');
+    const kode = document.querySelector('[data-id-pesanan]');
+    if (!tombol || !kode) return;
+
+    tombol.addEventListener('click', async () => {
+      const teks = tombol.getAttribute('data-target') ?? kode.textContent ?? '';
+      let berhasil = false;
+      try {
+        await navigator.clipboard.writeText(teks);
+        berhasil = true;
+      } catch {
+        // Fallback untuk browser tanpa Clipboard API.
+        const area = document.createElement('textarea');
+        area.value = teks;
+        area.setAttribute('readonly', '');
+        area.style.position = 'absolute';
+        area.style.left = '-9999px';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); berhasil = true; } catch {}
+        area.remove();
+      }
+      if (!berhasil) return;
+      const labelDefault = tombol.querySelector('[data-label-default]');
+      const labelSukses = tombol.querySelector('[data-label-sukses]');
+      if (labelDefault && labelSukses) {
+        labelDefault.classList.add('hidden');
+        labelSukses.classList.remove('hidden');
+        setTimeout(() => {
+          labelDefault.classList.remove('hidden');
+          labelSukses.classList.add('hidden');
+        }, 1800);
+      }
+    });
+  })();
+</script>
+
+<style>
+  .tombol-salin {
+    background: color-mix(in oklab, var(--color-emas) 18%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-emas) 50%, transparent);
+    color: var(--color-emas-lembut);
+    cursor: pointer;
+    transition: background 140ms ease, transform 140ms ease;
+  }
+  .tombol-salin:hover {
+    background: color-mix(in oklab, var(--color-emas) 28%, transparent);
+    transform: translateY(-1px);
+  }
+  .tombol-salin:focus-visible {
+    outline: 2px solid var(--color-emas);
+    outline-offset: 3px;
+  }
+</style>
